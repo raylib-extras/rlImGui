@@ -250,8 +250,6 @@ public:
             // draw the view
             rlImGuiImageRect(&ViewTexture.texture, (int)size.x, (int)size.y, viewRect);
 
-            ImGui::SetCursorPos(ImVec2(0, 0));
-
             ImGui::End();
         }
         ImGui::PopStyleVar();
@@ -271,7 +269,7 @@ public:
         float period = 10;
         float magnitude = 25;
 
-        Camera.position.x = sinf(GetTime() / period) * magnitude;
+        Camera.position.x = (float)(sinf(GetTime() / period) * magnitude);
 
         BeginTextureMode(ViewTexture);
         ClearBackground(SKYBLUE);
@@ -299,7 +297,6 @@ public:
 
         EndMode3D();
         EndTextureMode();
- 
     }
 
     Texture2D GridTexture = { 0 };
