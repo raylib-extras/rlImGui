@@ -33,9 +33,12 @@ There are two example programs in the examples folder.
 
 ## Simple
 This is the most simple use of ImGui in raylib, it just shows the ImGui demo window.
+![image](https://user-images.githubusercontent.com/322174/136596910-da1b60ae-4a39-48f0-ae84-f568bc396870.png)
+
 
 ## Editor
 This is a more complex example of ImGui, showing how to use raylib 2d and 3d cameras to draw into ImGui windows using render textures.
+![image](https://user-images.githubusercontent.com/322174/136596949-033ffe0a-2476-4030-988a-5bf5b6e2ade7.png)
 
 # Extras
 
