@@ -1013,9 +1013,9 @@
 
 
 #include "FA5FreeSolidFontData.h"
-#include "../rlImGui.h"
+#include "imgui.h"
 
-inline void AddRLImGuiFontAwesomeIconFonts(float size)
+inline void rlImGuiAddFontAwesomeIconFonts(float size)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();

@@ -806,9 +806,9 @@
 
 
 #include "ForkAwesomeFontData.h".h"
-#include "../rlImGui.h"
+#include "imgui.h"
 
-inline void AddRLImGuiForkAwesomeIconFonts(float size)
+inline void rlImGuiAddForkAwesomeIconFonts(float size)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
