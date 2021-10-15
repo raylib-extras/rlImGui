@@ -37,7 +37,11 @@ project "raylib"
 		defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS", "_WIN32"}
 		links {"winmm"}
 				
+	filter "action:gmake*"
+		links {"pthread", "GL", "m", "dl", "rt", "X11"}
+		
 	filter{}
+		
 	
 	location "build"
 	language "C"
@@ -97,8 +101,12 @@ project "simple"
 	filter "action:vs*"
 		defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS", "_WIN32"}
 		links {"winmm"}
-
-
+		
+	filter "action:gmake*"
+		links {"pthread", "GL", "m", "dl", "rt", "X11"}
+		
+	filter{}
+		
 project "editor"
 	kind "ConsoleApp"
 	location "examples"
@@ -119,3 +127,8 @@ project "editor"
 	filter "action:vs*"
 		defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS", "_WIN32"}
 		links {"winmm"}
+	filter "action:gmake*"
+		links {"pthread", "GL", "m", "dl", "rt", "X11"}
+		
+	filter{}
+	
