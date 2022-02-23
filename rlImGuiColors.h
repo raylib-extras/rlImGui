@@ -28,7 +28,8 @@
 *
 **********************************************************************************************/
 
-#pragma once
+#ifndef RLIMGUICOLORS_H
+#define RLIMGUICOLORS_H
 
 #include "raylib.h"
 #include "imgui.h"
@@ -40,3 +41,5 @@ namespace rlImGuiColors
         return ImVec4(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f);
     }
 }
+
+#endif
