@@ -28,7 +28,8 @@
 *
 **********************************************************************************************/
 
-#pragma once
+#ifndef RLIMGUI_H
+#define RLIMGUI_H
 
 #include "raylib.h"
 
@@ -54,4 +55,6 @@ void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Recta
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
