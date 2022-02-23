@@ -3,7 +3,8 @@
 // The Fork Awesome font is licensed under the SIL OFL 1.1:
 // http://scripts.sil.org/OFL
 
-#pragma once
+#ifndef FORKAWESOMEFONTDATA_H
+#define FORKAWESOMEFONTDATA_H
 
 unsigned char forkawesome_webfont_ttf[] = {
   0x00, 0x01, 0x00, 0x00, 0x00, 0x0d, 0x00, 0x80, 0x00, 0x03, 0x00, 0x50,
@@ -18259,3 +18260,5 @@ unsigned char forkawesome_webfont_ttf[] = {
   0xdd, 0x4d, 0x8f, 0xfd
 };
 unsigned int forkawesome_webfont_ttf_len = 219004;
+
+#endif
