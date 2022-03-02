@@ -246,7 +246,7 @@ static void rlImGuiTriangleVert(ImDrawVert& idx_vert)
 
 static void rlImGuiRenderTriangles(unsigned int count, int indexStart, const ImVector<ImDrawIdx>& indexBuffer, const ImVector<ImDrawVert>& vertBuffer, void* texturePtr)
 {
-    if (count == 0)
+    if (count < 3)
         return;
 	
     Texture* texture = (Texture*)texturePtr;
