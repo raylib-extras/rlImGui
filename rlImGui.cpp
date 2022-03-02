@@ -292,8 +292,6 @@ static void rlRenderData(ImDrawData* data)
 
     for (int l = 0; l < data->CmdListsCount; ++l)
     {
-        int idxOffset = 0;
-
         const ImDrawList* commandList = data->CmdLists[l];
 
         for (const auto& cmd : commandList->CmdBuffer)
@@ -302,13 +300,11 @@ static void rlRenderData(ImDrawData* data)
             if (cmd.UserCallback != nullptr)
             {
                 cmd.UserCallback(commandList, &cmd);
-                idxOffset += cmd.ElemCount;
+  
                 continue;
             }
 
-            rlImGuiRenderTriangles(cmd.ElemCount, idxOffset, commandList->IdxBuffer, commandList->VtxBuffer, cmd.TextureId);
-            idxOffset += cmd.ElemCount;
-
+            rlImGuiRenderTriangles(cmd.ElemCount, cmd.IdxOffset, commandList->IdxBuffer, commandList->VtxBuffer, cmd.TextureId);
             rlDrawRenderBatchActive();
         }
     }
