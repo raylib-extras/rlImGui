@@ -282,7 +282,20 @@ static void rlImGuiRenderTriangles(unsigned int count, int indexStart, const ImV
 static void EnableScissor(float x, float y, float width, float height)
 {
     rlEnableScissorTest();
-    rlScissor((int)x, GetScreenHeight() - (int)(y + height), (int)width, (int)height);
+#if defined(__APPLE__)
+    Vector2 scale = GetWindowScaleDPI();
+    rlScissor((int)(x*scale.x), (int)(GetScreenHeight()*scale.y - (((y + height)*scale.y))), (int)(width*scale.x), (int)(height*scale.y));
+#else
+    if ((CORE.Window.flags & FLAG_WINDOW_HIGHDPI) > 0)
+    {
+        Vector2 scale = GetWindowScaleDPI();
+        rlScissor((int)(x*scale.x), (int)(CORE.Window.currentFbo.height - (y + height)*scale.y), (int)(width*scale.x), (int)(height*scale.y));
+    }
+    else
+    {
+        rlScissor((int)x, CORE.Window.currentFbo.height - (int)(y + height), (int)width, (int)height);
+    }
+#endif
 }
 
 static void rlRenderData(ImDrawData* data)
