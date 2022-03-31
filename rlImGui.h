@@ -49,6 +49,7 @@ void rlImGuiReloadFonts();
 
 // image API
 void rlImGuiImage(const Texture *image);
+bool rlImGuiImageButton(const Texture *image);
 void rlImGuiImageSize(const Texture *image, int width, int height);
 void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Rectangle sourceRect);
 
