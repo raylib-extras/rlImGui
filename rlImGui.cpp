@@ -434,6 +434,14 @@ void rlImGuiImage(const Texture *image)
     ImGui::Image((ImTextureID)image, ImVec2(float(image->width), float(image->height)));
 }
 
+bool rlImGuiImageButton(const Texture *image) {
+    if (ImGui::ImageButton((ImTextureID)image, ImVec2(float(image->width), float(image->height))))
+    {
+        return true;
+    }
+    return false;
+}
+
 void rlImGuiImageSize(const Texture *image, int width, int height)
 {
     ImGui::Image((ImTextureID)image, ImVec2(float(width), float(height)));
