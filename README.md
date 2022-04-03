@@ -68,6 +68,7 @@ rlImGuiAddForkAwesomeIconFonts(12);
 Raylib textures can be drawn in ImGui using the following functions
 ```
 void rlImGuiImage(const Texture *image);
+bool rlImGuiImageButton(const Texture *image);
 void rlImGuiImageSize(const Texture *image, int width, int height);
 void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Rectangle sourceRect);
 ```
