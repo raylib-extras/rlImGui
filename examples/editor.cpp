@@ -73,7 +73,7 @@ public:
             viewRect.width = size.x;
             viewRect.height = -size.y;
 
-            if (ImGui::BeginChild("Toolbar", ImVec2(ImGui::GetContentRegionAvailWidth(), 25)))
+            if (ImGui::BeginChild("Toolbar", ImVec2(size.x, 25)))
             {
                 ImGui::SetCursorPosX(2);
                 ImGui::SetCursorPosY(3);
