@@ -357,7 +357,7 @@ void rlImGuiEndInitImGui()
     io.KeyMap[ImGuiKey_Space] = KEY_SPACE;
     io.KeyMap[ImGuiKey_Enter] = KEY_ENTER;
     io.KeyMap[ImGuiKey_Escape] = KEY_ESCAPE;
-    io.KeyMap[ImGuiKey_KeyPadEnter] = KEY_KP_ENTER;
+    io.KeyMap[ImGuiKey_KeypadEnter] = KEY_KP_ENTER;
     io.KeyMap[ImGuiKey_A] = KEY_A;
     io.KeyMap[ImGuiKey_C] = KEY_C;
     io.KeyMap[ImGuiKey_V] = KEY_V;

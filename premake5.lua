@@ -70,14 +70,14 @@ project "rlImGui"
 	language "C++"
 	targetdir "bin/%{cfg.buildcfg}"
 	
-	includedirs { "raylib/src","rlImGui", "imGui"}
+	includedirs { "raylib/src","rlImGui", "imgui"}
 	vpaths 
 	{
 		["Header Files"] = { "*.h"},
 		["Source Files"] = {"*.cpp"},
-		["ImGui Files"] = { "imGui/*.h","imGui/*.cpp" },
+		["ImGui Files"] = { "imgui/*.h","imgui/*.cpp" },
 	}
-	files {"imGui/*.h", "imGui/*.cpp", "*.cpp", "*.h", "extras/**.h"}
+	files {"imgui/*.h", "imgui/*.cpp", "*.cpp", "*.h", "extras/**.h"}
 
 
 group "Examples"
@@ -96,7 +96,7 @@ project "simple"
 
 	links {"raylib","rlImGui"}
 	
-	includedirs {"raylib/src", "./", "imGui" }
+	includedirs {"raylib/src", "./", "imgui" }
 	
 	filter "action:vs*"
 		defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS", "_WIN32"}
@@ -122,7 +122,7 @@ project "editor"
 
 	links {"raylib","rlImGui"}
 	
-	includedirs {"raylib/src", "./", "imGui" }
+	includedirs {"raylib/src", "./", "imgui" }
 	
 	filter "action:vs*"
 		defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS", "_WIN32"}
