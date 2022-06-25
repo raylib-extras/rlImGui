@@ -1,5 +1,5 @@
 workspace "rlImGui"
-	configurations { "Debug","Debug.DLL", "Release", "Release.DLL" }
+	configurations { "Debug", "Release" }
 	platforms { "x64"}
 	defaultplatform "x64"
 	
@@ -7,15 +7,7 @@ workspace "rlImGui"
 		defines { "DEBUG" }
 		symbols "On"
 		
-	filter "configurations:Debug.DLL"
-		defines { "DEBUG" }
-		symbols "On"
-
 	filter "configurations:Release"
-		defines { "NDEBUG" }
-		optimize "On"	
-		
-	filter "configurations:Release.DLL"
 		defines { "NDEBUG" }
 		optimize "On"	
 		
@@ -25,22 +17,19 @@ workspace "rlImGui"
 	targetdir "bin/%{cfg.buildcfg}/"
 		
 project "raylib"
-	
-	filter "configurations:Debug.DLL OR Release.DLL"
-		kind "SharedLib"
-		defines {"BUILD_LIBTYPE_SHARED"}
 		
-	filter "configurations:Debug OR Release"
-		kind "StaticLib"
+	kind "StaticLib"
 		
-	filter "action:vs*"
-		defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS", "_WIN32"}
-		links {"winmm"}
-				
-	filter "action:gmake*"
-		links {"pthread", "GL", "m", "dl", "rt", "X11"}
-		
-	filter{}
+	 filter "action:vs*"
+        defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS"}
+ 
+        characterset ("MBCS")
+
+    filter "action:vs*"
+        defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS"}
+        characterset ("MBCS")
+
+    filter{}
 		
 	
 	location "build"
@@ -62,8 +51,6 @@ project "rlImGui"
 		
 	filter "action:vs*"
 		defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS", "_WIN32"}
-		links {"winmm"}
-				
 	filter{}
 	
 	location "build"
@@ -99,11 +86,18 @@ project "simple"
 	includedirs {"raylib/src", "./", "imGui" }
 	
 	filter "action:vs*"
-		defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS", "_WIN32"}
-		links {"winmm"}
-		
-	filter "action:gmake*"
-		links {"pthread", "GL", "m", "dl", "rt", "X11"}
+        defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS"}
+        dependson {"raylib"}
+        links {"raylib.lib"}
+        characterset ("MBCS")
+
+    filter "system:windows"
+        defines{"_WIN32"}
+        links {"winmm", "kernel32", "opengl32", "gdi32"}
+        libdirs {"bin/%{cfg.buildcfg}"}
+
+    filter "system:linux"
+        links {"pthread", "GL", "m", "dl", "rt", "X11"}
 		
 	filter{}
 		
@@ -124,11 +118,19 @@ project "editor"
 	
 	includedirs {"raylib/src", "./", "imGui" }
 	
-	filter "action:vs*"
-		defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS", "_WIN32"}
-		links {"winmm"}
-	filter "action:gmake*"
-		links {"pthread", "GL", "m", "dl", "rt", "X11"}
+	 filter "action:vs*"
+        defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS"}
+        dependson {"raylib"}
+        links {"raylib.lib"}
+        characterset ("MBCS")
+
+    filter "system:windows"
+        defines{"_WIN32"}
+        links {"winmm", "kernel32", "opengl32", "gdi32"}
+        libdirs {"bin/%{cfg.buildcfg}"}
+
+    filter "system:linux"
+        links {"pthread", "GL", "m", "dl", "rt", "X11"}
 		
 	filter{}
 	
