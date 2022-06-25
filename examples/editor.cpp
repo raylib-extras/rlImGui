@@ -73,7 +73,7 @@ public:
             viewRect.width = size.x;
             viewRect.height = -size.y;
 
-            if (ImGui::BeginChild("Toolbar", ImVec2(ImGui::GetContentRegionAvailWidth(), 25)))
+            if (ImGui::BeginChild("Toolbar", ImVec2(ImGui::GetContentRegionAvail().x, 25)))
             {
                 ImGui::SetCursorPosX(2);
                 ImGui::SetCursorPosY(3);
@@ -269,7 +269,7 @@ public:
         float period = 10;
         float magnitude = 25;
 
-        Camera.position.x = (float)(sinf(GetTime() / period) * magnitude);
+        Camera.position.x = (float)(sinf((float)GetTime() / period) * magnitude);
 
         BeginTextureMode(ViewTexture);
         ClearBackground(SKYBLUE);
