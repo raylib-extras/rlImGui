@@ -45,24 +45,13 @@ This is a more complex example of ImGui, showing how to use raylib 2d and 3d cam
 ## rlImGuiColors.h
 This file has a converter to change Raylib colors into ImGui Colors
 
-## Icon Fonts
-The extras folder has files to help add icon fonts into ImGui. Functions to load the font and #defines for the font glyps are included in each header.
+## Font Awesome Icons
+Support for Font Awesome 6 https://fontawesome.com/ is built into rlImGui and enabled by default. You can simply
+#include "extras/IconsFontAwesome6.h"
+To use the ICON_FA macros for any icon in the free set.
 
-### Font Awesome
-This is a header in the extras folder to add icons from Font Awesome into ImGui.
-https://fontawesome.com/
-Simply call the add function to include the fonts in ImGui
-```
-rlImGuiAddFontAwesomeIconFonts(12); 
-```
+If you wish to disable font awesome support you can #define NO_FONT_AWESOME
 
-### ForkAwesome
-This is a header in the extras folder to add icons from Fork Awesome into ImGui.
-https://forkaweso.me/Fork-Awesome/
-Simply call the add function to include the fonts in ImGui
-```
-rlImGuiAddForkAwesomeIconFonts(12); 
-```
 
 # Images
 Raylib textures can be drawn in ImGui using the following functions
