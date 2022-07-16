@@ -41,6 +41,10 @@
 #include <vector>
 #include <map>
 
+#ifndef NO_FONT_AWESOME
+#include "extras/FA6FreeSolidFontData.h"
+#endif
+
 static std::vector<Texture> LoadedTextures;
 static Texture2D FontTexture;
 
@@ -399,6 +403,17 @@ void rlImGuiSetup(bool dark)
         ImGui::StyleColorsDark();
     else
         ImGui::StyleColorsLight();
+
+    ImGuiIO& io = ImGui::GetIO();
+    io.Fonts->AddFontDefault();
+
+#ifndef NO_FONT_AWESOME
+    static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+    ImFontConfig icons_config;
+    icons_config.MergeMode = true;
+    icons_config.PixelSnapH = true;
+    io.Fonts->AddFontFromMemoryCompressedTTF((void*)fa_solid_900_compressed_data, fa_solid_900_compressed_size, FONT_AWESOME_ICON_SIZE, &icons_config, icons_ranges);
+#endif
 
     rlImGuiEndInitImGui();
 }
