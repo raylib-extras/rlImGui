@@ -65,8 +65,18 @@ static void rlImGuiNewFrame()
 {
     ImGuiIO& io = ImGui::GetIO();
 
-    io.DisplaySize.x = float(GetScreenWidth());
-    io.DisplaySize.y = float(GetScreenHeight());
+    if (IsWindowFullscreen())
+    {
+        int monitor = GetCurrentMonitor();
+        io.DisplaySize.x = float(GetMonitorWidth(monitor));
+        io.DisplaySize.y = float(GetMonitorHeight(monitor));
+    }
+    else
+    {
+        io.DisplaySize.x = float(GetScreenWidth());
+        io.DisplaySize.y = float(GetScreenHeight());
+    }
+
     int width = io.DisplaySize.x, height = io.DisplaySize.y;
 #ifdef PLATFORM_DESKTOP
     glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
