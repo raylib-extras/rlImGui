@@ -77,12 +77,12 @@ static void rlImGuiNewFrame()
         io.DisplaySize.y = float(GetScreenHeight());
     }
 
-    int width = io.DisplaySize.x, height = io.DisplaySize.y;
+    float width = io.DisplaySize.x, height = io.DisplaySize.y;
 #ifdef PLATFORM_DESKTOP
     glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
 #endif
     if (width > 0 && height > 0) {
-        io.DisplayFramebufferScale = ImVec2((float)width / io.DisplaySize.x, (float)height / io.DisplaySize.y);
+        io.DisplayFramebufferScale = ImVec2(width / io.DisplaySize.x, height / io.DisplaySize.y);
     }
     else {
         io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
@@ -311,7 +311,10 @@ static void EnableScissor(float x, float y, float width, float height)
 {
     rlEnableScissorTest();
     ImGuiIO& io = ImGui::GetIO();
-    rlScissor((int)x * io.DisplayFramebufferScale.x, (GetScreenHeight() - (int)(y + height)) * io.DisplayFramebufferScale.y, (int)width * io.DisplayFramebufferScale.x, (int)height * io.DisplayFramebufferScale.y);
+    rlScissor((int)x * io.DisplayFramebufferScale.x,
+		(GetScreenHeight() - (int)(y + height)) * io.DisplayFramebufferScale.y,
+		(int)(width * io.DisplayFramebufferScale.x),
+		(int)(height * io.DisplayFramebufferScale.y));
 }
 
 static void rlRenderData(ImDrawData* data)
@@ -422,6 +425,7 @@ void rlImGuiSetup(bool dark)
     ImFontConfig icons_config;
     icons_config.MergeMode = true;
     icons_config.PixelSnapH = true;
+    icons_config.FontDataOwnedByAtlas = false;
     io.Fonts->AddFontFromMemoryCompressedTTF((void*)fa_solid_900_compressed_data, fa_solid_900_compressed_size, FONT_AWESOME_ICON_SIZE, &icons_config, icons_ranges);
 #endif
 
@@ -467,6 +471,8 @@ void rlImGuiShutdown()
 
     UnloadTexture(FontTexture);
     LoadedTextures.clear();
+
+    ImGui::DestroyContext();
 }
 
 void rlImGuiImage(const Texture *image)
