@@ -365,3 +365,4 @@ MigrationBackup/
 /examples/simple.vcxproj.filters
 /premake5.exe
 /rlImGui.sln
+*.ini
