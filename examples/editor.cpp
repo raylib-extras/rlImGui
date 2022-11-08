@@ -34,6 +34,8 @@ public:
 	virtual void Update() = 0;
 
 	bool Focused = false;
+
+    Rectangle ContentRect = { 0 };
 };
 
 class ImageViewerWindow : public DocumentWindow
@@ -60,8 +62,13 @@ public:
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImGui::SetNextWindowSizeConstraints(ImVec2(400, 400), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
 
+        Focused = false;
+
         if (ImGui::Begin("Image Viewer", &Open, ImGuiWindowFlags_NoScrollbar))
         {
+            // save off the screen space content rectangle
+            ContentRect = { ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x, ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y, ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y};
+            
             Focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
 
             ImVec2 size = ImGui::GetContentRegionAvail();
@@ -128,19 +135,21 @@ public:
             Camera.offset.y = GetScreenHeight() / 2.0f;
         }
 
+        Vector2 mousePos = GetMousePosition();
+
 		if (Focused)
 		{
             if (CurrentToolMode == ToolMode::Move)
             {
-                if (IsMouseButtonDown(0))
+                // only do this tool when the mouse is in the content area of the window
+                if (IsMouseButtonDown(0) && CheckCollisionPointRec(mousePos, ContentRect))
                 {
                     if (!Dragging)
                     {
-                        LastMousePos = GetMousePosition();
+                        LastMousePos = mousePos;
                         LastTarget = Camera.target;
                     }
                     Dragging = true;
-                    Vector2 mousePos = GetMousePosition();
                     Vector2 mouseDelta = Vector2Subtract(LastMousePos, mousePos);
 
                     mouseDelta.x /= Camera.zoom;
