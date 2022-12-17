@@ -38,18 +38,15 @@
 #endif
 
 #include <math.h>
-#include <vector>
-#include <map>
 
 #ifndef NO_FONT_AWESOME
 #include "extras/FA6FreeSolidFontData.h"
 #endif
 
-static std::vector<Texture> LoadedTextures;
 static Texture2D FontTexture;
 
 static ImGuiMouseCursor CurrentMouseCursor = ImGuiMouseCursor_COUNT;
-static std::map<ImGuiMouseCursor, MouseCursor> MouseCursorMap;
+static MouseCursor MouseCursorMap[ImGuiMouseCursor_COUNT];
 
 static const char* rlImGuiGetClipText(void*)
 {
@@ -130,11 +127,7 @@ static void rlImGuiNewFrame()
 
                 if (!(io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange))
                 {
-                    auto itr = MouseCursorMap.find(imgui_cursor);
-                    if (itr == MouseCursorMap.end())
-                        SetMouseCursor(MOUSE_CURSOR_DEFAULT);
-                    else
-                        SetMouseCursor(itr->second);
+		    SetMouseCursor((imgui_cursor > -1 && imgui_cursor < ImGuiMouseCursor_COUNT) ? MouseCursorMap[imgui_cursor] : MOUSE_CURSOR_DEFAULT);
                 }
             }
         }
@@ -348,7 +341,6 @@ static void rlRenderData(ImDrawData* data)
 
 void SetupMouseCursors()
 {
-    MouseCursorMap.clear();
     MouseCursorMap[ImGuiMouseCursor_Arrow] = MOUSE_CURSOR_ARROW;
     MouseCursorMap[ImGuiMouseCursor_TextInput] = MOUSE_CURSOR_IBEAM;
     MouseCursorMap[ImGuiMouseCursor_Hand] = MOUSE_CURSOR_POINTING_HAND;
@@ -466,11 +458,7 @@ void rlImGuiEnd()
 
 void rlImGuiShutdown()
 {
-    for (const auto& tx : LoadedTextures)
-        UnloadTexture(tx);
-
     UnloadTexture(FontTexture);
-    LoadedTextures.clear();
 
     ImGui::DestroyContext();
 }
