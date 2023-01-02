@@ -83,7 +83,7 @@ workspace "rlImGui"
 		architecture "x86_64"
 		
 	targetdir "bin/%{cfg.buildcfg}/"
-	defines ("IMGUI_DISABLE_OBSOLETE_FUNCTIONS","IMGUI_DISABLE_OBSOLETE_KEYIO")
+	
 
 	cdialect "C99"
 	cppdialect "C++11"
@@ -107,6 +107,8 @@ project "rlImGui"
 		["ImGui Files"] = { "imGui/*.h","imGui/*.cpp", "imGui-master/*.h","imGui-master/*.cpp" },
 	}
 	files {"imGui-master/*.h", "imGui-master/*.cpp", "imGui/*.h", "imGui/*.cpp", "*.cpp", "*.h", "extras/**.h"}
+
+	defines ("IMGUI_DISABLE_OBSOLETE_FUNCTIONS","IMGUI_DISABLE_OBSOLETE_KEYIO")
 
 group "Examples"
 project "simple"
