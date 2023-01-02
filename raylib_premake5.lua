@@ -49,7 +49,6 @@ function link_raylib()
     includedirs {raylib_dir .."/src/external" }
     includedirs {raylib_dir .."/src/external/glfw/include" }
     platform_defines()
-
     filter "action:vs*"
         defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS"}
         dependson {"raylib"}
