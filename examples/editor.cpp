@@ -299,8 +299,8 @@ public:
                 Vector3 min = { x - 0.5f,0,z - 0.5f };
                 Vector3 max = { x + 0.5f,1,z + 0.5f };
 
-                DrawCubeTexture(GridTexture, Vector3{ x, 1.5f, z }, 1, 1, 1, GREEN);
-                DrawCubeTexture(GridTexture, Vector3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
+				DrawCube(Vector3{ x, 1.5f, z }, 1, 1, 1, GREEN);
+				DrawCube(Vector3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
             }
         }
 

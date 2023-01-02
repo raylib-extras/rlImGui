@@ -381,7 +381,7 @@ void rlImGuiEndInitImGui()
     io.KeyMap[ImGuiKey_Space] = KEY_SPACE;
     io.KeyMap[ImGuiKey_Enter] = KEY_ENTER;
     io.KeyMap[ImGuiKey_Escape] = KEY_ESCAPE;
-    io.KeyMap[ImGuiKey_KeyPadEnter] = KEY_KP_ENTER;
+    io.KeyMap[ImGuiKey_KeypadEnter] = KEY_KP_ENTER;
     io.KeyMap[ImGuiKey_A] = KEY_A;
     io.KeyMap[ImGuiKey_C] = KEY_C;
     io.KeyMap[ImGuiKey_V] = KEY_V;
@@ -468,8 +468,14 @@ void rlImGuiImage(const Texture *image)
     ImGui::Image((ImTextureID)image, ImVec2(float(image->width), float(image->height)));
 }
 
-bool rlImGuiImageButton(const Texture *image) {
-    return ImGui::ImageButton((ImTextureID)image, ImVec2(float(image->width), float(image->height)));
+bool rlImGuiImageButton(const char* name, const Texture* image)
+{
+	return ImGui::ImageButton(name, (ImTextureID)image, ImVec2(float(image->width), float(image->height)));
+}
+
+bool rlImGuiImageButtonSize(const char* name, const Texture* image, ImVec2 size)
+{
+	return ImGui::ImageButton(name, (ImTextureID)image, size);
 }
 
 void rlImGuiImageSize(const Texture *image, int width, int height)

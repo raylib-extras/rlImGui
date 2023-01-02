@@ -366,3 +366,6 @@ MigrationBackup/
 /premake5.exe
 /rlImGui.sln
 *.ini
+raylib-master
+_build
+Catalog

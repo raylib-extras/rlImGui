@@ -1,3 +1,57 @@
+newoption
+{
+    trigger = "graphics",
+    value = "OPENGL_VERSION",
+    description = "version of OpenGL to build raylib against",
+    allowed = {
+        { "opengl11", "OpenGL 1.1"},
+        { "opengl21", "OpenGL 2.1"},
+        { "opengl33", "OpenGL 3.3"},
+        { "opengl43", "OpenGL 4.3"}
+    },
+    default = "opengl33"
+}
+
+function define_C()
+    language "C"
+end
+
+function define_Cpp()
+    language "C++"
+end
+
+function string.starts(String,Start)
+    return string.sub(String,1,string.len(Start))==Start
+end
+
+function link_to(lib)
+    links (lib)
+    includedirs ("../"..lib.."/include", "../"..lib.."/" )
+end
+
+function download_progress(total, current)
+    local ratio = current / total;
+    ratio = math.min(math.max(ratio, 0), 1);
+    local percent = math.floor(ratio * 100);
+    print("Download progress (" .. percent .. "%/100%)")
+end
+
+function check_raylib()
+    if(os.isdir("raylib") == false and os.isdir("raylib-master") == false) then
+        if(not os.isfile("raylib-master.zip")) then
+            print("Raylib not found, downloading from github")
+            local result_str, response_code = http.download("https://github.com/raysan5/raylib/archive/refs/heads/master.zip", "raylib-master.zip", {
+                progress = download_progress,
+                headers = { "From: Premake", "Referer: Premake" }
+            })
+        end
+        print("Unzipping to " ..  os.getcwd())
+        zip.extract("raylib-master.zip", os.getcwd())
+        os.remove("raylib-master.zip")
+    end
+end
+
+
 workspace "rlImGui"
 	configurations { "Debug", "Release" }
 	platforms { "x64"}
@@ -16,48 +70,20 @@ workspace "rlImGui"
 		
 	targetdir "bin/%{cfg.buildcfg}/"
 		
-project "raylib"
-		
-	kind "StaticLib"
-		
-	 filter "action:vs*"
-        defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS"}
- 
-        characterset ("MBCS")
+    cdialect "C99"
+    cppdialect "C++11"
+    check_raylib();
 
-    filter "action:vs*"
-        defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS"}
-        characterset ("MBCS")
-
-    filter{}
-		
-	
-	location "build"
-	language "C"
-	targetdir "bin/%{cfg.buildcfg}"
-	
-	includedirs { "raylib/src", "raylib/src/external/glfw/include"}
-	vpaths 
-	{
-		["Header Files"] = { "raylib/src/**.h"},
-		["Source Files/*"] = {"raylib/src/**.c"},
-	}
-	files {"raylib/src/*.h", "raylib/src/*.c"}
-	
-	defines{"PLATFORM_DESKTOP", "GRAPHICS_API_OPENGL_33"}
+    include ("raylib_premake5.lua")
 		
 project "rlImGui"
 	kind "StaticLib"
-		
-	filter "action:vs*"
-		defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS", "_WIN32"}
-	filter{}
-	
-	location "build"
+	location "_build"
+	targetdir "_bin/%{cfg.buildcfg}"
 	language "C++"
-	targetdir "bin/%{cfg.buildcfg}"
 	
-	includedirs { "raylib/src","rlImGui", "imGui"}
+	include_raylib()
+	includedirs { "rlImGui", "imGui"}
 	vpaths 
 	{
 		["Header Files"] = { "*.h"},
@@ -66,13 +92,12 @@ project "rlImGui"
 	}
 	files {"imGui/*.h", "imGui/*.cpp", "*.cpp", "*.h", "extras/**.h"}
 
-
 group "Examples"
 project "simple"
 	kind "ConsoleApp"
-	location "examples"
 	language "C++"
-	targetdir "bin/%{cfg.buildcfg}"
+	location "_build"
+	targetdir "_bin/%{cfg.buildcfg}"
 	
 	vpaths 
 	{
@@ -80,32 +105,15 @@ project "simple"
 		["Source Files"] = {"examples/**.cpp", "examples/**.c"},
 	}
 	files {"examples/simple.cpp"}
-
-	links {"raylib","rlImGui"}
-	
-	includedirs {"raylib/src", "./", "imGui" }
-	
-	filter "action:vs*"
-        defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS"}
-        dependson {"raylib"}
-        links {"raylib.lib"}
-        characterset ("MBCS")
-
-    filter "system:windows"
-        defines{"_WIN32"}
-        links {"winmm", "kernel32", "opengl32", "gdi32"}
-        libdirs {"bin/%{cfg.buildcfg}"}
-
-    filter "system:linux"
-        links {"pthread", "GL", "m", "dl", "rt", "X11"}
-		
-	filter{}
+	link_raylib()
+	links {"rlImGui"}
+	includedirs {"./", "imGui" }
 		
 project "editor"
 	kind "ConsoleApp"
-	location "examples"
 	language "C++"
-	targetdir "bin/%{cfg.buildcfg}"
+	location "_build"
+	targetdir "_bin/%{cfg.buildcfg}"
 	
 	vpaths 
 	{
@@ -113,24 +121,6 @@ project "editor"
 		["Source Files"] = {"examples/**.cpp", "examples/**.c"},
 	}
 	files {"examples/editor.cpp"}
-
-	links {"raylib","rlImGui"}
-	
-	includedirs {"raylib/src", "./", "imGui" }
-	
-	 filter "action:vs*"
-        defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS"}
-        dependson {"raylib"}
-        links {"raylib.lib"}
-        characterset ("MBCS")
-
-    filter "system:windows"
-        defines{"_WIN32"}
-        links {"winmm", "kernel32", "opengl32", "gdi32"}
-        libdirs {"bin/%{cfg.buildcfg}"}
-
-    filter "system:linux"
-        links {"pthread", "GL", "m", "dl", "rt", "X11"}
-		
-	filter{}
-	
+	link_raylib()
+	links {"rlImGui"}
+	includedirs {"./", "imGui" }

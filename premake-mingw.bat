@@ -1,1 +1,2 @@
-premake5 gmake2
+premake5.exe gmake2
+pause
