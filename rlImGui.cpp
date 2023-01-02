@@ -58,18 +58,13 @@ static void rlImGuiSetClipText(void*, const char* text)
     SetClipboardText(text);
 }
 
+static void rlImGuiKeyInput();
+
 static void rlImGuiNewFrame()
 {
     ImGuiIO& io = ImGui::GetIO();
-
-    if (IsWindowFullscreen())
-    {
-        int monitor = GetCurrentMonitor();
-        io.DisplaySize.x = float(GetMonitorWidth(monitor));
-        io.DisplaySize.y = float(GetMonitorHeight(monitor));
-    }
-    else
-    {
+    
+    if (ImGui::GetFrameCount() == 0 || IsWindowResized()) {
         io.DisplaySize.x = float(GetScreenWidth());
         io.DisplaySize.y = float(GetScreenHeight());
     }
@@ -87,10 +82,7 @@ static void rlImGuiNewFrame()
 
     io.DeltaTime = GetFrameTime();
 
-    io.KeyCtrl = IsKeyDown(KEY_RIGHT_CONTROL) || IsKeyDown(KEY_LEFT_CONTROL);
-    io.KeyShift = IsKeyDown(KEY_RIGHT_SHIFT) || IsKeyDown(KEY_LEFT_SHIFT);
-    io.KeyAlt = IsKeyDown(KEY_RIGHT_ALT) || IsKeyDown(KEY_LEFT_ALT);
-    io.KeySuper = IsKeyDown(KEY_RIGHT_SUPER) || IsKeyDown(KEY_LEFT_SUPER);
+    rlImGuiKeyInput();
 
     if (io.WantSetMousePos)
     {
@@ -134,122 +126,128 @@ static void rlImGuiNewFrame()
     }
 }
 
-#define FOR_ALL_KEYS(X) \
-    do { \
-    X(KEY_APOSTROPHE); \
-    X(KEY_COMMA); \
-    X(KEY_MINUS); \
-    X(KEY_PERIOD); \
-    X(KEY_SLASH); \
-    X(KEY_ZERO); \
-    X(KEY_ONE); \
-    X(KEY_TWO); \
-    X(KEY_THREE); \
-    X(KEY_FOUR); \
-    X(KEY_FIVE); \
-    X(KEY_SIX); \
-    X(KEY_SEVEN); \
-    X(KEY_EIGHT); \
-    X(KEY_NINE); \
-    X(KEY_SEMICOLON); \
-    X(KEY_EQUAL); \
-    X(KEY_A); \
-    X(KEY_B); \
-    X(KEY_C); \
-    X(KEY_D); \
-    X(KEY_E); \
-    X(KEY_F); \
-    X(KEY_G); \
-    X(KEY_H); \
-    X(KEY_I); \
-    X(KEY_J); \
-    X(KEY_K); \
-    X(KEY_L); \
-    X(KEY_M); \
-    X(KEY_N); \
-    X(KEY_O); \
-    X(KEY_P); \
-    X(KEY_Q); \
-    X(KEY_R); \
-    X(KEY_S); \
-    X(KEY_T); \
-    X(KEY_U); \
-    X(KEY_V); \
-    X(KEY_W); \
-    X(KEY_X); \
-    X(KEY_Y); \
-    X(KEY_Z); \
-    X(KEY_SPACE); \
-    X(KEY_ESCAPE); \
-    X(KEY_ENTER); \
-    X(KEY_TAB); \
-    X(KEY_BACKSPACE); \
-    X(KEY_INSERT); \
-    X(KEY_DELETE); \
-    X(KEY_RIGHT); \
-    X(KEY_LEFT); \
-    X(KEY_DOWN); \
-    X(KEY_UP); \
-    X(KEY_PAGE_UP); \
-    X(KEY_PAGE_DOWN); \
-    X(KEY_HOME); \
-    X(KEY_END); \
-    X(KEY_CAPS_LOCK); \
-    X(KEY_SCROLL_LOCK); \
-    X(KEY_NUM_LOCK); \
-    X(KEY_PRINT_SCREEN); \
-    X(KEY_PAUSE); \
-    X(KEY_F1); \
-    X(KEY_F2); \
-    X(KEY_F3); \
-    X(KEY_F4); \
-    X(KEY_F5); \
-    X(KEY_F6); \
-    X(KEY_F7); \
-    X(KEY_F8); \
-    X(KEY_F9); \
-    X(KEY_F10); \
-    X(KEY_F11); \
-    X(KEY_F12); \
-    X(KEY_LEFT_SHIFT); \
-    X(KEY_LEFT_CONTROL); \
-    X(KEY_LEFT_ALT); \
-    X(KEY_LEFT_SUPER); \
-    X(KEY_RIGHT_SHIFT); \
-    X(KEY_RIGHT_CONTROL); \
-    X(KEY_RIGHT_ALT); \
-    X(KEY_RIGHT_SUPER); \
-    X(KEY_KB_MENU); \
-    X(KEY_LEFT_BRACKET); \
-    X(KEY_BACKSLASH); \
-    X(KEY_RIGHT_BRACKET); \
-    X(KEY_GRAVE); \
-    X(KEY_KP_0); \
-    X(KEY_KP_1); \
-    X(KEY_KP_2); \
-    X(KEY_KP_3); \
-    X(KEY_KP_4); \
-    X(KEY_KP_5); \
-    X(KEY_KP_6); \
-    X(KEY_KP_7); \
-    X(KEY_KP_8); \
-    X(KEY_KP_9); \
-    X(KEY_KP_DECIMAL); \
-    X(KEY_KP_DIVIDE); \
-    X(KEY_KP_MULTIPLY); \
-    X(KEY_KP_SUBTRACT); \
-    X(KEY_KP_ADD); \
-    X(KEY_KP_ENTER); \
-    X(KEY_KP_EQUAL); \
-    } while(0)
 
-#define SET_KEY_DOWN(KEY) io.KeysDown[KEY] = IsKeyDown(KEY)
+static void SetKeyDown(ImGuiIO& io, KeyboardKey rlkey, ImGuiKey key) {
+    io.KeysData[ImGui::GetKeyIndex(key)].Down = IsKeyDown(rlkey);
+}
 
+static void SetAllKeyDown(ImGuiIO& io) {
+    SetKeyDown(io, KEY_APOSTROPHE,    ImGuiKey_Apostrophe);
+    SetKeyDown(io, KEY_COMMA,         ImGuiKey_Comma);
+    SetKeyDown(io, KEY_MINUS,         ImGuiKey_Minus);
+    SetKeyDown(io, KEY_PERIOD,        ImGuiKey_Period);
+    SetKeyDown(io, KEY_SLASH,         ImGuiKey_Slash);
+    SetKeyDown(io, KEY_ZERO,          ImGuiKey_0);
+    SetKeyDown(io, KEY_ONE,           ImGuiKey_1);
+    SetKeyDown(io, KEY_TWO,           ImGuiKey_2);
+    SetKeyDown(io, KEY_THREE,         ImGuiKey_3);
+    SetKeyDown(io, KEY_FOUR,          ImGuiKey_4);
+    SetKeyDown(io, KEY_FIVE,          ImGuiKey_5);
+    SetKeyDown(io, KEY_SIX,           ImGuiKey_6);
+    SetKeyDown(io, KEY_SEVEN,         ImGuiKey_7);
+    SetKeyDown(io, KEY_EIGHT,         ImGuiKey_8);
+    SetKeyDown(io, KEY_NINE,          ImGuiKey_9);
+    SetKeyDown(io, KEY_SEMICOLON,     ImGuiKey_Semicolon);
+    SetKeyDown(io, KEY_EQUAL,         ImGuiKey_Equal);
+    SetKeyDown(io, KEY_A,             ImGuiKey_A);
+    SetKeyDown(io, KEY_B,             ImGuiKey_B);
+    SetKeyDown(io, KEY_C,             ImGuiKey_C);
+    SetKeyDown(io, KEY_D,             ImGuiKey_D);
+    SetKeyDown(io, KEY_E,             ImGuiKey_E);
+    SetKeyDown(io, KEY_F,             ImGuiKey_F);
+    SetKeyDown(io, KEY_G,             ImGuiKey_G);
+    SetKeyDown(io, KEY_H,             ImGuiKey_H);
+    SetKeyDown(io, KEY_I,             ImGuiKey_I);
+    SetKeyDown(io, KEY_J,             ImGuiKey_J);
+    SetKeyDown(io, KEY_K,             ImGuiKey_K);
+    SetKeyDown(io, KEY_L,             ImGuiKey_L);
+    SetKeyDown(io, KEY_M,             ImGuiKey_M);
+    SetKeyDown(io, KEY_N,             ImGuiKey_N);
+    SetKeyDown(io, KEY_O,             ImGuiKey_O);
+    SetKeyDown(io, KEY_P,             ImGuiKey_P);
+    SetKeyDown(io, KEY_Q,             ImGuiKey_Q);
+    SetKeyDown(io, KEY_R,             ImGuiKey_R);
+    SetKeyDown(io, KEY_S,             ImGuiKey_S);
+    SetKeyDown(io, KEY_T,             ImGuiKey_T);
+    SetKeyDown(io, KEY_U,             ImGuiKey_U);
+    SetKeyDown(io, KEY_V,             ImGuiKey_V);
+    SetKeyDown(io, KEY_W,             ImGuiKey_W);
+    SetKeyDown(io, KEY_X,             ImGuiKey_X);
+    SetKeyDown(io, KEY_Y,             ImGuiKey_Y);
+    SetKeyDown(io, KEY_Z,             ImGuiKey_Z);
+    SetKeyDown(io, KEY_SPACE,         ImGuiKey_Space);
+    SetKeyDown(io, KEY_ESCAPE,        ImGuiKey_Escape);
+    SetKeyDown(io, KEY_ENTER,         ImGuiKey_Enter);
+    SetKeyDown(io, KEY_TAB,           ImGuiKey_Tab);
+    SetKeyDown(io, KEY_BACKSPACE,     ImGuiKey_Backspace);
+    SetKeyDown(io, KEY_INSERT,        ImGuiKey_Insert);
+    SetKeyDown(io, KEY_DELETE,        ImGuiKey_Delete);
+    SetKeyDown(io, KEY_RIGHT,         ImGuiKey_RightArrow);
+    SetKeyDown(io, KEY_LEFT,          ImGuiKey_LeftArrow);
+    SetKeyDown(io, KEY_DOWN,          ImGuiKey_DownArrow);
+    SetKeyDown(io, KEY_UP,            ImGuiKey_UpArrow);
+    SetKeyDown(io, KEY_PAGE_UP,       ImGuiKey_PageUp);
+    SetKeyDown(io, KEY_PAGE_DOWN,     ImGuiKey_PageDown);
+    SetKeyDown(io, KEY_HOME,          ImGuiKey_Home);
+    SetKeyDown(io, KEY_END,           ImGuiKey_End);
+    SetKeyDown(io, KEY_CAPS_LOCK,     ImGuiKey_CapsLock);
+    SetKeyDown(io, KEY_SCROLL_LOCK,   ImGuiKey_ScrollLock);
+    SetKeyDown(io, KEY_NUM_LOCK,      ImGuiKey_NumLock);
+    SetKeyDown(io, KEY_PRINT_SCREEN,  ImGuiKey_PrintScreen);
+    SetKeyDown(io, KEY_PAUSE,         ImGuiKey_Pause);
+    SetKeyDown(io, KEY_F1,            ImGuiKey_F1);
+    SetKeyDown(io, KEY_F2,            ImGuiKey_F2);
+    SetKeyDown(io, KEY_F3,            ImGuiKey_F3);
+    SetKeyDown(io, KEY_F4,            ImGuiKey_F4);
+    SetKeyDown(io, KEY_F5,            ImGuiKey_F5);
+    SetKeyDown(io, KEY_F6,            ImGuiKey_F6);
+    SetKeyDown(io, KEY_F7,            ImGuiKey_F7);
+    SetKeyDown(io, KEY_F8,            ImGuiKey_F8);
+    SetKeyDown(io, KEY_F9,            ImGuiKey_F9);
+    SetKeyDown(io, KEY_F10,           ImGuiKey_F10);
+    SetKeyDown(io, KEY_F11,           ImGuiKey_F11);
+    SetKeyDown(io, KEY_F12,           ImGuiKey_F12);
+    SetKeyDown(io, KEY_LEFT_SHIFT,    ImGuiKey_LeftShift);
+    SetKeyDown(io, KEY_LEFT_CONTROL,  ImGuiKey_LeftCtrl);
+    SetKeyDown(io, KEY_LEFT_ALT,      ImGuiKey_LeftAlt);
+    SetKeyDown(io, KEY_LEFT_SUPER,    ImGuiKey_LeftSuper);
+    SetKeyDown(io, KEY_RIGHT_SHIFT,   ImGuiKey_RightShift);
+    SetKeyDown(io, KEY_RIGHT_CONTROL, ImGuiKey_RightCtrl);
+    SetKeyDown(io, KEY_RIGHT_ALT,     ImGuiKey_RightAlt);
+    SetKeyDown(io, KEY_RIGHT_SUPER,   ImGuiKey_RightSuper);
+    SetKeyDown(io, KEY_KB_MENU,       ImGuiKey_Menu);
+    SetKeyDown(io, KEY_LEFT_BRACKET,  ImGuiKey_LeftBracket);
+    SetKeyDown(io, KEY_BACKSLASH,     ImGuiKey_Backslash);
+    SetKeyDown(io, KEY_RIGHT_BRACKET, ImGuiKey_RightBracket);
+    SetKeyDown(io, KEY_GRAVE,         ImGuiKey_GraveAccent);
+    SetKeyDown(io, KEY_KP_0,          ImGuiKey_Keypad0);
+    SetKeyDown(io, KEY_KP_1,          ImGuiKey_Keypad1);
+    SetKeyDown(io, KEY_KP_2,          ImGuiKey_Keypad2);
+    SetKeyDown(io, KEY_KP_3,          ImGuiKey_Keypad3);
+    SetKeyDown(io, KEY_KP_4,          ImGuiKey_Keypad4);
+    SetKeyDown(io, KEY_KP_5,          ImGuiKey_Keypad5);
+    SetKeyDown(io, KEY_KP_6,          ImGuiKey_Keypad6);
+    SetKeyDown(io, KEY_KP_7,          ImGuiKey_Keypad7);
+    SetKeyDown(io, KEY_KP_8,          ImGuiKey_Keypad8);
+    SetKeyDown(io, KEY_KP_9,          ImGuiKey_Keypad9);
+    SetKeyDown(io, KEY_KP_DECIMAL,    ImGuiKey_KeypadDecimal);
+    SetKeyDown(io, KEY_KP_DIVIDE,     ImGuiKey_KeypadDivide);
+    SetKeyDown(io, KEY_KP_MULTIPLY,   ImGuiKey_KeypadMultiply);
+    SetKeyDown(io, KEY_KP_SUBTRACT,   ImGuiKey_KeypadSubtract);
+    SetKeyDown(io, KEY_KP_ADD,        ImGuiKey_KeypadAdd);
+    SetKeyDown(io, KEY_KP_ENTER,      ImGuiKey_KeypadEnter);
+    SetKeyDown(io, KEY_KP_EQUAL,      ImGuiKey_KeypadEqual);
+}
 
-static void rlImGuiEvents()
+static void rlImGuiKeyInput()
 {
     ImGuiIO& io = ImGui::GetIO();
-    FOR_ALL_KEYS(SET_KEY_DOWN);
+    SetAllKeyDown(io);
+
+    io.KeyCtrl = IsKeyDown(KEY_RIGHT_CONTROL) || IsKeyDown(KEY_LEFT_CONTROL);
+    io.KeyShift = IsKeyDown(KEY_RIGHT_SHIFT) || IsKeyDown(KEY_LEFT_SHIFT);
+    io.KeyAlt = IsKeyDown(KEY_RIGHT_ALT) || IsKeyDown(KEY_LEFT_ALT);
+    io.KeySuper = IsKeyDown(KEY_RIGHT_SUPER) || IsKeyDown(KEY_LEFT_SUPER);
 
     unsigned int pressed = GetCharPressed();
     if (pressed != 0)
@@ -269,7 +267,7 @@ static void rlImGuiRenderTriangles(unsigned int count, int indexStart, const ImV
 {
     if (count < 3)
         return;
-	
+
     Texture* texture = (Texture*)texturePtr;
 
     unsigned int textureId = (texture == nullptr) ? 0 : texture->id;
@@ -279,7 +277,7 @@ static void rlImGuiRenderTriangles(unsigned int count, int indexStart, const ImV
 
     for (unsigned int i = 0; i <= (count - 3); i += 3)
     {
-        if(rlCheckRenderBatchLimit(3)) 
+        if(rlCheckRenderBatchLimit(3))
         {
             rlBegin(RL_TRIANGLES);
             rlSetTexture(textureId);
@@ -325,7 +323,7 @@ static void rlRenderData(ImDrawData* data)
             if (cmd.UserCallback != nullptr)
             {
                 cmd.UserCallback(commandList, &cmd);
-  
+
                 continue;
             }
 
@@ -365,29 +363,6 @@ void rlImGuiEndInitImGui()
     io.BackendPlatformName = "imgui_impl_raylib";
 
     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-
-    io.KeyMap[ImGuiKey_Tab] = KEY_TAB;
-    io.KeyMap[ImGuiKey_LeftArrow] = KEY_LEFT;
-    io.KeyMap[ImGuiKey_RightArrow] = KEY_RIGHT;
-    io.KeyMap[ImGuiKey_UpArrow] = KEY_UP;
-    io.KeyMap[ImGuiKey_DownArrow] = KEY_DOWN;
-    io.KeyMap[ImGuiKey_PageUp] = KEY_PAGE_DOWN;
-    io.KeyMap[ImGuiKey_PageDown] = KEY_PAGE_UP;
-    io.KeyMap[ImGuiKey_Home] = KEY_HOME;
-    io.KeyMap[ImGuiKey_End] = KEY_END;
-    io.KeyMap[ImGuiKey_Insert] = KEY_INSERT;
-    io.KeyMap[ImGuiKey_Delete] = KEY_DELETE;
-    io.KeyMap[ImGuiKey_Backspace] = KEY_BACKSPACE;
-    io.KeyMap[ImGuiKey_Space] = KEY_SPACE;
-    io.KeyMap[ImGuiKey_Enter] = KEY_ENTER;
-    io.KeyMap[ImGuiKey_Escape] = KEY_ESCAPE;
-    io.KeyMap[ImGuiKey_KeyPadEnter] = KEY_KP_ENTER;
-    io.KeyMap[ImGuiKey_A] = KEY_A;
-    io.KeyMap[ImGuiKey_C] = KEY_C;
-    io.KeyMap[ImGuiKey_V] = KEY_V;
-    io.KeyMap[ImGuiKey_X] = KEY_X;
-    io.KeyMap[ImGuiKey_Y] = KEY_Y;
-    io.KeyMap[ImGuiKey_Z] = KEY_Z;
 
     io.MousePos = ImVec2(0, 0);
 
@@ -446,7 +421,6 @@ void rlImGuiReloadFonts()
 void rlImGuiBegin()
 {
     rlImGuiNewFrame();
-    rlImGuiEvents();
     ImGui::NewFrame();
 }
 
