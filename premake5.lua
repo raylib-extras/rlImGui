@@ -99,14 +99,14 @@ project "rlImGui"
 	language "C++"
 	
 	include_raylib()
-	includedirs { "rlImGui", "imGui", "imGui-master"}
+	includedirs { "rlImGui", "imgui", "imgui-master"}
 	vpaths 
 	{
 		["Header Files"] = { "*.h"},
 		["Source Files"] = {"*.cpp"},
-		["ImGui Files"] = { "imGui/*.h","imGui/*.cpp", "imGui-master/*.h","imGui-master/*.cpp" },
+		["ImGui Files"] = { "imgui/*.h","imgui/*.cpp", "imgui-master/*.h","imgui-master/*.cpp" },
 	}
-	files {"imGui-master/*.h", "imGui-master/*.cpp", "imGui/*.h", "imGui/*.cpp", "*.cpp", "*.h", "extras/**.h"}
+	files {"imgui-master/*.h", "imgui-master/*.cpp", "imgui/*.h", "imgui/*.cpp", "*.cpp", "*.h", "extras/**.h"}
 
 	defines ("IMGUI_DISABLE_OBSOLETE_FUNCTIONS","IMGUI_DISABLE_OBSOLETE_KEYIO")
 
@@ -125,7 +125,7 @@ project "simple"
 	files {"examples/simple.cpp"}
 	link_raylib()
 	links {"rlImGui"}
-	includedirs {"./", "imGui", "imGui-master" }
+	includedirs {"./", "imgui", "imgui-master" }
 		
 project "editor"
 	kind "ConsoleApp"
@@ -141,4 +141,4 @@ project "editor"
 	files {"examples/editor.cpp"}
 	link_raylib()
 	links {"rlImGui"}
-	includedirs {"./", "imGui", "imGui-master" }
+	includedirs {"./", "imgui", "imgui-master" }
