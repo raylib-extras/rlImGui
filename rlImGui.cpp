@@ -31,7 +31,6 @@
 
 #include "imgui.h"
 #include "raylib.h"
-#include "config.h"
 #include "rlgl.h"
 
 #ifdef PLATFORM_DESKTOP
