@@ -263,11 +263,6 @@ void SetupMouseCursors()
 	MouseCursorMap[ImGuiMouseCursor_NotAllowed] = MOUSE_CURSOR_NOT_ALLOWED;
 }
 
-void rlImGuiBeginInitImGui()
-{
-	ImGui::CreateContext(nullptr);
-}
-
 void rlImGuiEndInitImGui()
 {
 	SetupMouseCursors();
@@ -400,9 +395,14 @@ void rlSetupKeymap()
 	RaylibKeyMap[KEY_KP_EQUAL] = ImGuiKey_KeypadEqual;
 }
 
-void rlImGuiSetup(bool dark)
+void rlImGuiBeginInitImGui()
 {
 	rlSetupKeymap();
+	ImGui::CreateContext(nullptr);
+}
+
+void rlImGuiSetup(bool dark)
+{
 	rlImGuiBeginInitImGui();
 
 	if (dark)
