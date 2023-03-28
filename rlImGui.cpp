@@ -51,6 +51,18 @@ static MouseCursor MouseCursorMap[ImGuiMouseCursor_COUNT];
 
 static std::map<KeyboardKey, ImGuiKey> RaylibKeyMap;
 
+static bool LastFrameFocused = false;
+
+static bool LastControlPressed = false;
+static bool LastShiftPressed = false;
+static bool LastAltPressed = false;
+static bool LastSuperPressed = false;
+
+bool rlImGuiIsControlDown() { return IsKeyDown(KEY_RIGHT_CONTROL) || IsKeyDown(KEY_LEFT_CONTROL); }
+bool rlImGuiIsShiftDown() { return IsKeyDown(KEY_RIGHT_SHIFT) || IsKeyDown(KEY_LEFT_SHIFT); }
+bool rlImGuiIsAltDown() { return IsKeyDown(KEY_RIGHT_ALT) || IsKeyDown(KEY_LEFT_ALT); }
+bool rlImGuiIsSuperDown() { return IsKeyDown(KEY_RIGHT_SUPER) || IsKeyDown(KEY_LEFT_SUPER); }
+
 static const char* rlImGuiGetClipText(void*) 
 {
 	return GetClipboardText();
@@ -136,10 +148,31 @@ static void rlImGuiEvents()
 {
 	ImGuiIO& io = ImGui::GetIO();
 
-	io.KeyCtrl = IsKeyDown(KEY_RIGHT_CONTROL) || IsKeyDown(KEY_LEFT_CONTROL);
-	io.KeyShift = IsKeyDown(KEY_RIGHT_SHIFT) || IsKeyDown(KEY_LEFT_SHIFT);
-	io.KeyAlt = IsKeyDown(KEY_RIGHT_ALT) || IsKeyDown(KEY_LEFT_ALT);
-	io.KeySuper = IsKeyDown(KEY_RIGHT_SUPER) || IsKeyDown(KEY_LEFT_SUPER);
+	bool focused = IsWindowFocused();
+	if (focused != LastFrameFocused)
+		io.AddFocusEvent(focused);
+	LastFrameFocused = focused;
+
+	// handle the modifyer key events so that shortcuts work
+	bool ctrlDown = rlImGuiIsControlDown();
+	if (ctrlDown != LastControlPressed)
+		io.AddKeyEvent(ImGuiMod_Ctrl, ctrlDown);
+	LastControlPressed = ctrlDown;
+
+	bool shiftDown = rlImGuiIsShiftDown();
+	if (shiftDown != LastShiftPressed)
+		io.AddKeyEvent(ImGuiMod_Shift, ctrlDown);
+	LastShiftPressed = shiftDown;
+
+	bool altDown = rlImGuiIsAltDown();
+	if (altDown != LastAltPressed)
+		io.AddKeyEvent(ImGuiMod_Alt, altDown);
+	LastAltPressed = altDown;
+
+	bool superDown = rlImGuiIsSuperDown();
+	if (superDown != LastSuperPressed)
+		io.AddKeyEvent(ImGuiMod_Super, ctrlDown);
+	LastSuperPressed = superDown;
 
 	// get the pressed keys, they are in event order
 	int keyId = GetKeyPressed();
@@ -150,6 +183,9 @@ static void rlImGuiEvents()
 			io.AddKeyEvent(keyItr->second, true);
 		keyId = GetKeyPressed();
 	}
+
+ 	for (auto keyItr : RaylibKeyMap)
+ 		io.KeysData[keyItr.second].Down = IsKeyDown(keyItr.first);
 
 	// look for any keys that were down last frame and see if they were down and are released
 	for (const auto keyItr : RaylibKeyMap)
@@ -403,6 +439,12 @@ void rlImGuiBeginInitImGui()
 
 void rlImGuiSetup(bool dark)
 {
+	LastFrameFocused = IsWindowFocused();
+	LastControlPressed = false;
+	LastShiftPressed = false;
+	LastAltPressed = false;
+	LastSuperPressed = false;
+
 	rlImGuiBeginInitImGui();
 
 	if (dark)
