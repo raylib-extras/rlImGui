@@ -116,10 +116,11 @@ static void rlImGuiNewFrame()
 	io.MouseDown[1] = IsMouseButtonDown(MOUSE_RIGHT_BUTTON);
 	io.MouseDown[2] = IsMouseButtonDown(MOUSE_MIDDLE_BUTTON);
 
-	if (GetMouseWheelMove() > 0)
-		io.MouseWheel += 1;
-	else if (GetMouseWheelMove() < 0)
-		io.MouseWheel -= 1;
+	{
+		Vector2 mouseWheel = GetMouseWheelMoveV();
+		io.MouseWheel += mouseWheel.y;
+		io.MouseWheelH += mouseWheel.x;
+	}
 
 	if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) == 0)
 	{
