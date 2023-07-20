@@ -162,7 +162,7 @@ static void rlImGuiEvents()
 
 	bool shiftDown = rlImGuiIsShiftDown();
 	if (shiftDown != LastShiftPressed)
-		io.AddKeyEvent(ImGuiMod_Shift, ctrlDown);
+		io.AddKeyEvent(ImGuiMod_Shift, shiftDown);
 	LastShiftPressed = shiftDown;
 
 	bool altDown = rlImGuiIsAltDown();
@@ -172,7 +172,7 @@ static void rlImGuiEvents()
 
 	bool superDown = rlImGuiIsSuperDown();
 	if (superDown != LastSuperPressed)
-		io.AddKeyEvent(ImGuiMod_Super, ctrlDown);
+		io.AddKeyEvent(ImGuiMod_Super, superDown);
 	LastSuperPressed = superDown;
 
 	// get the pressed keys, they are in event order
