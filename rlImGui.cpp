@@ -89,10 +89,8 @@ static void rlImGuiNewFrame()
 		io.DisplaySize.y = float(GetScreenHeight());
 	}
 
-	int width = int(io.DisplaySize.x), height = int(io.DisplaySize.y);
-#ifdef PLATFORM_DESKTOP
-	glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
-#endif
+	int width = rlGetFramebufferWidth();
+	int height = rlGetFramebufferHeight();
 	if (width > 0 && height > 0) {
 		io.DisplayFramebufferScale = ImVec2(width / io.DisplaySize.x, height / io.DisplaySize.y);
 	}
