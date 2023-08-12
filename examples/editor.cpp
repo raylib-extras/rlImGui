@@ -28,14 +28,14 @@ public:
 
 	RenderTexture ViewTexture;
 
-    virtual void Setup() = 0;
-    virtual void Shutdown() = 0;
+	virtual void Setup() = 0;
+	virtual void Shutdown() = 0;
 	virtual void Show() = 0;
 	virtual void Update() = 0;
 
 	bool Focused = false;
 
-    Rectangle ContentRect = { 0 };
+	Rectangle ContentRect = { 0 };
 };
 
 class ImageViewerWindow : public DocumentWindow
@@ -44,271 +44,269 @@ public:
 
 	void Setup() override
 	{
-        Camera.zoom = 1;
-        Camera.target.x = 0;
-        Camera.target.y = 0;
-        Camera.rotation = 0;
-        Camera.offset.x = GetScreenWidth() / 2.0f;
-        Camera.offset.y = GetScreenHeight() / 2.0f;
+		Camera.zoom = 1;
+		Camera.target.x = 0;
+		Camera.target.y = 0;
+		Camera.rotation = 0;
+		Camera.offset.x = GetScreenWidth() / 2.0f;
+		Camera.offset.y = GetScreenHeight() / 2.0f;
 
 		ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
-        ImageTexture = LoadTexture("resources/parrots.png");
+		ImageTexture = LoadTexture("resources/parrots.png");
 
 		UpdateRenderTexture();
 	}
 
 	void Show() override
 	{
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-        ImGui::SetNextWindowSizeConstraints(ImVec2(400, 400), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::SetNextWindowSizeConstraints(ImVec2(400, 400), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
 
-        Focused = false;
+		Focused = false;
 
-        if (ImGui::Begin("Image Viewer", &Open, ImGuiWindowFlags_NoScrollbar))
-        {
-            // save off the screen space content rectangle
-            ContentRect = { ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x, ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y, ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y};
-            
-            Focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
+		if (ImGui::Begin("Image Viewer", &Open, ImGuiWindowFlags_NoScrollbar))
+		{
+			// save off the screen space content rectangle
+			ContentRect = { ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x, ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y, ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y };
 
-            ImVec2 size = ImGui::GetContentRegionAvail();
+			Focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
 
-            // center the scratch pad in the view
-            Rectangle viewRect = { 0 };
-            viewRect.x = ViewTexture.texture.width / 2 - size.x / 2;
-            viewRect.y = ViewTexture.texture.height / 2 - size.y / 2;
-            viewRect.width = size.x;
-            viewRect.height = -size.y;
+			ImVec2 size = ImGui::GetContentRegionAvail();
 
-            if (ImGui::BeginChild("Toolbar", ImVec2(ImGui::GetContentRegionAvail().x, 25)))
-            {
-                ImGui::SetCursorPosX(2);
-                ImGui::SetCursorPosY(3);
+			// center the scratch pad in the view
+			Rectangle viewRect = { 0 };
+			viewRect.x = ViewTexture.texture.width / 2 - size.x / 2;
+			viewRect.y = ViewTexture.texture.height / 2 - size.y / 2;
+			viewRect.width = size.x;
+			viewRect.height = -size.y;
 
-                if (ImGui::Button("None"))
-                {
-                    CurrentToolMode = ToolMode::None;
-                }
-                ImGui::SameLine();
+			if (ImGui::BeginChild("Toolbar", ImVec2(ImGui::GetContentRegionAvail().x, 25)))
+			{
+				ImGui::SetCursorPosX(2);
+				ImGui::SetCursorPosY(3);
 
-                if (ImGui::Button("Move"))
-                {
-                    CurrentToolMode = ToolMode::Move;
-                }
+				if (ImGui::Button("None"))
+				{
+					CurrentToolMode = ToolMode::None;
+				}
+				ImGui::SameLine();
 
-                ImGui::SameLine();
-                switch (CurrentToolMode)
-                {
-                case ToolMode::None:
-                    ImGui::TextUnformatted("No Tool");
-                    break;
-                case ToolMode::Move:
-                    ImGui::TextUnformatted("Move Tool");
-                    break;
-                default:
-                    break;
-                }
+				if (ImGui::Button("Move"))
+				{
+					CurrentToolMode = ToolMode::Move;
+				}
 
-                ImGui::SameLine();
-                ImGui::TextUnformatted(TextFormat("camera target X%f Y%f", Camera.target.x, Camera.target.y));
-                ImGui::EndChild();
-            }
+				ImGui::SameLine();
+				switch (CurrentToolMode)
+				{
+					case ToolMode::None:
+						ImGui::TextUnformatted("No Tool");
+						break;
+					case ToolMode::Move:
+						ImGui::TextUnformatted("Move Tool");
+						break;
+					default:
+						break;
+				}
 
-            rlImGuiImageRect(&ViewTexture.texture, (int)size.x, (int)size.y, viewRect);
+				ImGui::SameLine();
+				ImGui::TextUnformatted(TextFormat("camera target X%f Y%f", Camera.target.x, Camera.target.y));
+				ImGui::EndChild();
+			}
 
-            ImGui::End();
-        }
-        ImGui::PopStyleVar();
+			rlImGuiImageRect(&ViewTexture.texture, (int)size.x, (int)size.y, viewRect);	
+		}
+		ImGui::End();
+		ImGui::PopStyleVar();
 	}
 
 	void Update() override
 	{
-        if (!Open)
-            return;
+		if (!Open)
+			return;
 
-        if (IsWindowResized())
-        {
-            UnloadRenderTexture(ViewTexture);
+		if (IsWindowResized())
+		{
+			UnloadRenderTexture(ViewTexture);
 			ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
-            Camera.offset.x = GetScreenWidth() / 2.0f;
-            Camera.offset.y = GetScreenHeight() / 2.0f;
-        }
+			Camera.offset.x = GetScreenWidth() / 2.0f;
+			Camera.offset.y = GetScreenHeight() / 2.0f;
+		}
 
-        Vector2 mousePos = GetMousePosition();
+		Vector2 mousePos = GetMousePosition();
 
 		if (Focused)
 		{
-            if (CurrentToolMode == ToolMode::Move)
-            {
-                // only do this tool when the mouse is in the content area of the window
-                if (IsMouseButtonDown(0) && CheckCollisionPointRec(mousePos, ContentRect))
-                {
-                    if (!Dragging)
-                    {
-                        LastMousePos = mousePos;
-                        LastTarget = Camera.target;
-                    }
-                    Dragging = true;
-                    Vector2 mouseDelta = Vector2Subtract(LastMousePos, mousePos);
+			if (CurrentToolMode == ToolMode::Move)
+			{
+				// only do this tool when the mouse is in the content area of the window
+				if (IsMouseButtonDown(0) && CheckCollisionPointRec(mousePos, ContentRect))
+				{
+					if (!Dragging)
+					{
+						LastMousePos = mousePos;
+						LastTarget = Camera.target;
+					}
+					Dragging = true;
+					Vector2 mouseDelta = Vector2Subtract(LastMousePos, mousePos);
 
-                    mouseDelta.x /= Camera.zoom;
-                    mouseDelta.y /= Camera.zoom;
-                    Camera.target = Vector2Add(LastTarget, mouseDelta);
+					mouseDelta.x /= Camera.zoom;
+					mouseDelta.y /= Camera.zoom;
+					Camera.target = Vector2Add(LastTarget, mouseDelta);
 
-                    DirtyScene = true;
-                    
-                }
-                else
-                {
-                    Dragging = false;
-                }
-            }
+					DirtyScene = true;
+
+				}
+				else
+				{
+					Dragging = false;
+				}
+			}
 		}
 		else
 		{
 			Dragging = false;
 		}
 
-        if (DirtyScene)
-        {
-            DirtyScene = false;
-            UpdateRenderTexture();
-        }
+		if (DirtyScene)
+		{
+			DirtyScene = false;
+			UpdateRenderTexture();
+		}
 	}
 
-    Texture ImageTexture;
-    Camera2D Camera = { 0 };
+	Texture ImageTexture;
+	Camera2D Camera = { 0 };
 
-    Vector2 LastMousePos = { 0 };
-    Vector2 LastTarget = { 0 };
-    bool Dragging = false;
+	Vector2 LastMousePos = { 0 };
+	Vector2 LastTarget = { 0 };
+	bool Dragging = false;
 
-    bool DirtyScene = false;
+	bool DirtyScene = false;
 
-    enum class ToolMode
-    {
-        None,
-        Move,
-    };
+	enum class ToolMode
+	{
+		None,
+		Move,
+	};
 
-    ToolMode CurrentToolMode = ToolMode::None;
+	ToolMode CurrentToolMode = ToolMode::None;
 
-    void UpdateRenderTexture()
-    {
-        BeginTextureMode(ViewTexture);
-        ClearBackground(BLUE);
-        BeginMode2D(Camera);
-        DrawTexture(ImageTexture, ImageTexture.width / -2, ImageTexture.height / -2, WHITE);
-        EndMode2D();
-        EndTextureMode();
-    }
+	void UpdateRenderTexture()
+	{
+		BeginTextureMode(ViewTexture);
+		ClearBackground(BLUE);
+		BeginMode2D(Camera);
+		DrawTexture(ImageTexture, ImageTexture.width / -2, ImageTexture.height / -2, WHITE);
+		EndMode2D();
+		EndTextureMode();
+	}
 
-    void Shutdown() override
-    {
-        UnloadRenderTexture(ViewTexture);
-        UnloadTexture(ImageTexture);
-    }
+	void Shutdown() override
+	{
+		UnloadRenderTexture(ViewTexture);
+		UnloadTexture(ImageTexture);
+	}
 };
 
 class SceneViewWindow : public DocumentWindow
 {
 public:
-    Camera3D Camera = { 0 };
+	Camera3D Camera = { 0 };
 
-    void Setup() override
-    {
-        ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+	void Setup() override
+	{
+		ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
-        Camera.fovy = 45;
-        Camera.up.y = 1;
-        Camera.position.y = 3;
-        Camera.position.z = -25;
+		Camera.fovy = 45;
+		Camera.up.y = 1;
+		Camera.position.y = 3;
+		Camera.position.z = -25;
 
-        Image img = GenImageChecked(256, 256, 32, 32, DARKGRAY, WHITE);
-        GridTexture = LoadTextureFromImage(img);
-        UnloadImage(img);
-        GenTextureMipmaps(&GridTexture);
-        SetTextureFilter(GridTexture, TEXTURE_FILTER_ANISOTROPIC_16X);
-        SetTextureWrap(GridTexture, TEXTURE_WRAP_CLAMP);
-    }
+		Image img = GenImageChecked(256, 256, 32, 32, DARKGRAY, WHITE);
+		GridTexture = LoadTextureFromImage(img);
+		UnloadImage(img);
+		GenTextureMipmaps(&GridTexture);
+		SetTextureFilter(GridTexture, TEXTURE_FILTER_ANISOTROPIC_16X);
+		SetTextureWrap(GridTexture, TEXTURE_WRAP_CLAMP);
+	}
 
-    void Shutdown() override
-    {
-        UnloadRenderTexture(ViewTexture);
-        UnloadTexture(GridTexture);
-    }
+	void Shutdown() override
+	{
+		UnloadRenderTexture(ViewTexture);
+		UnloadTexture(GridTexture);
+	}
 
-    void Show() override
-    {
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-        ImGui::SetNextWindowSizeConstraints(ImVec2(400, 400), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
+	void Show() override
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::SetNextWindowSizeConstraints(ImVec2(400, 400), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
 
-        if (ImGui::Begin("3D View", &Open, ImGuiWindowFlags_NoScrollbar))
-        {
-            Focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
+		if (ImGui::Begin("3D View", &Open, ImGuiWindowFlags_NoScrollbar))
+		{
+			Focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
 
-            ImVec2 size = ImGui::GetContentRegionAvail();
+			ImVec2 size = ImGui::GetContentRegionAvail();
 
-            Rectangle viewRect = { 0 };
-            viewRect.x = ViewTexture.texture.width / 2 - size.x / 2;
-            viewRect.y = ViewTexture.texture.height / 2 - size.y / 2;
-            viewRect.width = size.x;
-            viewRect.height = -size.y;
+			Rectangle viewRect = { 0 };
+			viewRect.x = ViewTexture.texture.width / 2 - size.x / 2;
+			viewRect.y = ViewTexture.texture.height / 2 - size.y / 2;
+			viewRect.width = size.x;
+			viewRect.height = -size.y;
 
-            // draw the view
-            rlImGuiImageRect(&ViewTexture.texture, (int)size.x, (int)size.y, viewRect);
+			// draw the view
+			rlImGuiImageRect(&ViewTexture.texture, (int)size.x, (int)size.y, viewRect);
+		}
+		ImGui::End();
+		ImGui::PopStyleVar();
+	}
 
-            ImGui::End();
-        }
-        ImGui::PopStyleVar();
-    }
+	void Update() override
+	{
+		if (!Open)
+			return;
 
-    void Update() override
-    {
-        if (!Open)
-            return;
+		if (IsWindowResized())
+		{
+			UnloadRenderTexture(ViewTexture);
+			ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+		}
 
-        if (IsWindowResized())
-        {
-            UnloadRenderTexture(ViewTexture);
-            ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
-        }
+		float period = 10;
+		float magnitude = 25;
 
-        float period = 10;
-        float magnitude = 25;
+		Camera.position.x = (float)(sinf((float)GetTime() / period) * magnitude);
 
-        Camera.position.x = (float)(sinf((float)GetTime() / period) * magnitude);
+		BeginTextureMode(ViewTexture);
+		ClearBackground(SKYBLUE);
 
-        BeginTextureMode(ViewTexture);
-        ClearBackground(SKYBLUE);
+		BeginMode3D(Camera);
 
-        BeginMode3D(Camera);
+		// grid of cube trees on a plane to make a "world"
+		DrawPlane(Vector3{ 0, 0, 0 }, Vector2{ 50, 50 }, BEIGE); // simple world plane
+		float spacing = 4;
+		int count = 5;
 
-        // grid of cube trees on a plane to make a "world"
-        DrawPlane(Vector3 { 0, 0, 0 }, Vector2{ 50, 50 }, BEIGE); // simple world plane
-        float spacing = 4;
-        int count = 5;
+		for (float x = -count * spacing; x <= count * spacing; x += spacing)
+		{
+			for (float z = -count * spacing; z <= count * spacing; z += spacing)
+			{
+				Vector3 pos = { x, 0.5f, z };
 
-        for (float x = -count * spacing; x <= count * spacing; x += spacing)
-        {
-            for (float z = -count * spacing; z <= count * spacing; z += spacing)
-            {
-                Vector3 pos = { x, 0.5f, z };
-
-                Vector3 min = { x - 0.5f,0,z - 0.5f };
-                Vector3 max = { x + 0.5f,1,z + 0.5f };
+				Vector3 min = { x - 0.5f,0,z - 0.5f };
+				Vector3 max = { x + 0.5f,1,z + 0.5f };
 
 				DrawCube(Vector3{ x, 1.5f, z }, 1, 1, 1, GREEN);
 				DrawCube(Vector3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
-            }
-        }
+			}
+		}
 
-        EndMode3D();
-        EndTextureMode();
-    }
+		EndMode3D();
+		EndTextureMode();
+	}
 
-    Texture2D GridTexture = { 0 };
+	Texture2D GridTexture = { 0 };
 };
 
 
@@ -331,7 +329,7 @@ void DoMainMenu()
 		{
 			ImGui::MenuItem("ImGui Demo", nullptr, &ImGuiDemoOpen);
 			ImGui::MenuItem("Image Viewer", nullptr, &ImageViewer.Open);
-            ImGui::MenuItem("3D View", nullptr, &SceneView.Open);
+			ImGui::MenuItem("3D View", nullptr, &SceneView.Open);
 
 			ImGui::EndMenu();
 		}
@@ -353,16 +351,16 @@ int main(int argc, char* argv[])
 	ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly = true;
 
 	ImageViewer.Setup();
-    ImageViewer.Open = true;
+	ImageViewer.Open = true;
 
-    SceneView.Setup();
-    SceneView.Open = true;
+	SceneView.Setup();
+	SceneView.Open = true;
 
 	// Main game loop
 	while (!WindowShouldClose() && !Quit)    // Detect window close button or ESC key
 	{
 		ImageViewer.Update();
-        SceneView.Update();
+		SceneView.Update();
 
 		BeginDrawing();
 		ClearBackground(DARKGRAY);
@@ -374,10 +372,10 @@ int main(int argc, char* argv[])
 			ImGui::ShowDemoWindow(&ImGuiDemoOpen);
 
 		if (ImageViewer.Open)
-            ImageViewer.Show();
+			ImageViewer.Show();
 
-        if (SceneView.Open)
-            SceneView.Show();
+		if (SceneView.Open)
+			SceneView.Show();
 
 		rlImGuiEnd();
 
@@ -386,8 +384,8 @@ int main(int argc, char* argv[])
 	}
 	rlImGuiShutdown();
 
-    ImageViewer.Shutdown();
-    SceneView.Shutdown();
+	ImageViewer.Shutdown();
+	SceneView.Shutdown();
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------   
