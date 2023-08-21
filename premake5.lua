@@ -127,12 +127,17 @@ project "simple"
 	links {"rlImGui"}
 	includedirs {"./", "imgui", "imgui-master" }
 		
+    filter "action:vs*"
+		debugdir "$(SolutionDir)"	
+	
+		
 project "editor"
 	kind "ConsoleApp"
 	language "C++"
 	location "_build"
 	targetdir "_bin/%{cfg.buildcfg}"
-	
+
+
 	vpaths 
 	{
 		["Header Files"] = { "examples/**.h"},
@@ -142,3 +147,7 @@ project "editor"
 	link_raylib()
 	links {"rlImGui"}
 	includedirs {"./", "imgui", "imgui-master" }
+
+    filter "action:vs*"
+		debugdir "$(SolutionDir)"	
+	
