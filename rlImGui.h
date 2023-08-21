@@ -32,8 +32,6 @@
 
 #include "raylib.h"
 
-#include "imgui.h"
-
 #ifndef NO_FONT_AWESOME
 #include "extras/IconsFontAwesome6.h"
 #define FONT_AWESOME_ICON_SIZE 11
@@ -57,7 +55,7 @@ void rlImGuiReloadFonts();
 // image API
 void rlImGuiImage(const Texture *image);
 bool rlImGuiImageButton(const char* name, const Texture *image);
-bool rlImGuiImageButtonSize(const char* name, const Texture* image, ImVec2 size);
+bool rlImGuiImageButtonSize(const char* name, const Texture* image, struct ImVec2 size);
 void rlImGuiImageSize(const Texture *image, int width, int height);
 void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Rectangle sourceRect);
 
