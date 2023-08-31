@@ -89,14 +89,18 @@ static void rlImGuiNewFrame()
 		io.DisplaySize.y = float(GetScreenHeight());
 	}
 
-	int width = rlGetFramebufferWidth();
-	int height = rlGetFramebufferHeight();
-	if (width > 0 && height > 0) {
-		io.DisplayFramebufferScale = ImVec2(width / io.DisplaySize.x, height / io.DisplaySize.y);
-	}
-	else {
-		io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
-	}
+    int width = int(io.DisplaySize.x), height = int(io.DisplaySize.y);
+#ifdef PLATFORM_DESKTOP
+    glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
+#endif
+    if (width > 0 && height > 0) 
+	{
+        io.DisplayFramebufferScale = ImVec2(width / io.DisplaySize.x, height / io.DisplaySize.y);
+    }
+    else 
+	{
+        io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
+    }
 
 	io.DeltaTime = GetFrameTime();
 
@@ -460,7 +464,11 @@ void rlImGuiSetup(bool dark)
 	icons_config.MergeMode = true;
 	icons_config.PixelSnapH = true;
 	icons_config.FontDataOwnedByAtlas = false;
-	io.Fonts->AddFontFromMemoryCompressedTTF((void*)fa_solid_900_compressed_data, fa_solid_900_compressed_size, FONT_AWESOME_ICON_SIZE, &icons_config, icons_ranges);
+
+	icons_config.GlyphRanges = icons_ranges;
+
+	io.Fonts->AddFontFromFileTTF("resources/fa-solid-900.ttf", FONT_AWESOME_ICON_SIZE, &icons_config, nullptr);
+	//io.Fonts->AddFontFromMemoryCompressedTTF((void*)fa_solid_900_compressed_data, fa_solid_900_compressed_size, FONT_AWESOME_ICON_SIZE, &icons_config, icons_ranges);
 #endif
 
 	rlImGuiEndInitImGui();
