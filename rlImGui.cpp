@@ -466,9 +466,7 @@ void rlImGuiSetup(bool dark)
 	icons_config.FontDataOwnedByAtlas = false;
 
 	icons_config.GlyphRanges = icons_ranges;
-
-	io.Fonts->AddFontFromFileTTF("resources/fa-solid-900.ttf", FONT_AWESOME_ICON_SIZE, &icons_config, nullptr);
-	//io.Fonts->AddFontFromMemoryCompressedTTF((void*)fa_solid_900_compressed_data, fa_solid_900_compressed_size, FONT_AWESOME_ICON_SIZE, &icons_config, icons_ranges);
+	io.Fonts->AddFontFromMemoryCompressedTTF((void*)fa_solid_900_compressed_data, fa_solid_900_compressed_size, FONT_AWESOME_ICON_SIZE, &icons_config, icons_ranges);
 #endif
 
 	rlImGuiEndInitImGui();
