@@ -63,7 +63,16 @@ bool rlImGuiIsShiftDown() { return IsKeyDown(KEY_RIGHT_SHIFT) || IsKeyDown(KEY_L
 bool rlImGuiIsAltDown() { return IsKeyDown(KEY_RIGHT_ALT) || IsKeyDown(KEY_LEFT_ALT); }
 bool rlImGuiIsSuperDown() { return IsKeyDown(KEY_RIGHT_SUPER) || IsKeyDown(KEY_LEFT_SUPER); }
 
-static const char* rlImGuiGetClipText(void*) 
+struct rlImGui_Data
+{
+	double                      Time;
+
+	rlImGui_Data()   { memset((void*)this, 0, sizeof(*this)); }
+};
+
+static rlImGui_Data* rlImGui_GetBackendData()     { return ImGui::GetCurrentContext() ? (rlImGui_Data*)ImGui::GetIO().BackendPlatformUserData : nullptr; }
+
+static const char* rlImGuiGetClipText(void*)
 {
 	return GetClipboardText();
 }
@@ -75,6 +84,9 @@ static void rlImGuiSetClipText(void*, const char* text)
 
 static void rlImGuiNewFrame()
 {
+	rlImGui_Data* bd = rlImGui_GetBackendData();
+	IM_ASSERT(bd != nullptr && "Did you call rlImGuiSetup()?");
+
 	ImGuiIO& io = ImGui::GetIO();
 
 	if (IsWindowFullscreen())
@@ -89,20 +101,22 @@ static void rlImGuiNewFrame()
 		io.DisplaySize.y = float(GetScreenHeight());
 	}
 
-    int width = int(io.DisplaySize.x), height = int(io.DisplaySize.y);
+	int width = int(io.DisplaySize.x), height = int(io.DisplaySize.y);
 #ifdef PLATFORM_DESKTOP
-    glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
+	glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
 #endif
-    if (width > 0 && height > 0) 
+	if (width > 0 && height > 0)
 	{
-        io.DisplayFramebufferScale = ImVec2(width / io.DisplaySize.x, height / io.DisplaySize.y);
-    }
-    else 
+		io.DisplayFramebufferScale = ImVec2(width / io.DisplaySize.x, height / io.DisplaySize.y);
+	}
+	else
 	{
-        io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
-    }
+		io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
+	}
 
-	io.DeltaTime = GetFrameTime();
+	double current_time = GetTime();
+	io.DeltaTime = bd->Time > 0.0 ? (float)(current_time - bd->Time) : (float)(1.0f / 60.0f);
+	bd->Time = current_time;
 
 	if (io.WantSetMousePos)
 	{
@@ -307,8 +321,10 @@ void rlImGuiEndInitImGui()
 	SetupMouseCursors();
 
 	ImGuiIO& io = ImGui::GetIO();
-	io.BackendPlatformName = "imgui_impl_raylib";
 
+	rlImGui_Data* bd = IM_NEW(rlImGui_Data)();
+	io.BackendPlatformUserData = (void*)bd;
+	io.BackendPlatformName = io.BackendRendererName = "imgui_impl_raylib";
 	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 
 	io.MousePos = ImVec2(0, 0);
