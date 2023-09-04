@@ -41,7 +41,7 @@
 extern "C" {
 #endif
 
-// basic API
+// Basic API
 void rlImGuiSetup(bool dark);
 void rlImGuiBegin();
 void rlImGuiEnd();
@@ -51,6 +51,9 @@ void rlImGuiShutdown();
 void rlImGuiBeginInitImGui();
 void rlImGuiEndInitImGui();
 void rlImGuiReloadFonts();
+
+// Advanced Update API
+void rlImGuiBeginDelta(float deltaTime);
 
 // image API
 void rlImGuiImage(const Texture *image);
