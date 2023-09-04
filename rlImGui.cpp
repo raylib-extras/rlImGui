@@ -518,26 +518,49 @@ void rlImGuiShutdown()
 
 void rlImGuiImage(const Texture* image)
 {
+	if (!image)
+		return;
+
     ImGui::Image((ImTextureID)image, ImVec2(float(image->width), float(image->height)));
 }
 
 bool rlImGuiImageButton(const char* name, const Texture* image)
 {
+	if (!image)
+		return false;
+
     return ImGui::ImageButton(name, (ImTextureID)image, ImVec2(float(image->width), float(image->height)));
 }
 
 bool rlImGuiImageButtonSize(const char* name, const Texture* image, ImVec2 size)
 {
+	if (!image)
+		return false;
+
     return ImGui::ImageButton(name, (ImTextureID)image, size);
 }
 
 void rlImGuiImageSize(const Texture* image, int width, int height)
 {
+	if (!image)
+		return;
+
     ImGui::Image((ImTextureID)image, ImVec2(float(width), float(height)));
+}
+
+void rlImGuiImageSizeV(const Texture* image, Vector2 size)
+{
+	if (!image)
+		return;
+
+	ImGui::Image((ImTextureID)image, ImVec2(size.x, size.y));
 }
 
 void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Rectangle sourceRect)
 {
+	if (!image)
+		return;
+
     ImVec2 uv0;
     ImVec2 uv1;
 
@@ -564,4 +587,12 @@ void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Recta
     }
 
     ImGui::Image((ImTextureID)image, ImVec2(float(destWidth), float(destHeight)), uv0, uv1);
+}
+
+void rlImGuiImageRenderTexture(const RenderTexture* image)
+{
+    if (!image)
+        return;
+
+    rlImGuiImageRect(&image->texture, image->texture.width, image->texture.height, Rectangle{ 0,0, float(image->texture.width), -float(image->texture.height) });
 }
