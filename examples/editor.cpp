@@ -246,18 +246,8 @@ public:
 		if (ImGui::Begin("3D View", &Open, ImGuiWindowFlags_NoScrollbar))
 		{
 			Focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
-
-			ImVec2 size = ImGui::GetContentRegionAvail();
-
-			Rectangle viewRect = { 0 };
-			viewRect.x = ViewTexture.texture.width / 2 - size.x / 2;
-			viewRect.y = ViewTexture.texture.height / 2 - size.y / 2;
-			viewRect.width = size.x;
-			viewRect.height = -size.y;
-
 			// draw the view
 			rlImGuiImageRenderTextureFit(&ViewTexture, true);
-			//rlImGuiImageRect(&ViewTexture.texture, (int)size.x, (int)size.y, viewRect);
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
