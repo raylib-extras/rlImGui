@@ -256,7 +256,8 @@ public:
 			viewRect.height = -size.y;
 
 			// draw the view
-			rlImGuiImageRect(&ViewTexture.texture, (int)size.x, (int)size.y, viewRect);
+			rlImGuiImageRenderTextureFit(&ViewTexture, true);
+			//rlImGuiImageRect(&ViewTexture.texture, (int)size.x, (int)size.y, viewRect);
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
