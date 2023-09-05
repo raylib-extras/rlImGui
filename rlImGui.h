@@ -119,7 +119,6 @@ void rlImGuiImageSize(const Texture *image, int width, int height);
 /// <param name="size">The size of drawn image</param>
 void rlImGuiImageSizeV(const Texture* image, Vector2 size);
 
-
 /// <summary>
 /// Draw a portion texture as an image in an ImGui Context at a defined size
 /// Uses the current ImGui Cursor position and the specified size
@@ -144,7 +143,6 @@ void rlImGuiImageRenderTexture(const RenderTexture* image);
 /// <param name="image">The render texture to draw</param>
 /// <param name="center">When true the image will be centered in the content area</param>
 void rlImGuiImageRenderTextureFit(const RenderTexture* image, bool center);
-
 
 /// <summary>
 /// Draws a texture as an image button in an ImGui context. Uses the current ImGui cursor position and the full size of the texture
