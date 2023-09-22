@@ -197,8 +197,13 @@ public:
 	{
 		BeginTextureMode(ViewTexture);
 		ClearBackground(BLUE);
+
+		// camera with our view offset with a world origin of 0,0
 		BeginMode2D(Camera);
+
+		// center the image at 0,0
 		DrawTexture(ImageTexture, ImageTexture.width / -2, ImageTexture.height / -2, WHITE);
+
 		EndMode2D();
 		EndTextureMode();
 	}
