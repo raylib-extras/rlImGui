@@ -99,7 +99,11 @@ static void rlImGuiNewFrame(float deltaTime)
     }
     else 
     {
+#if __APPLE__
+        io.DisplayFramebufferScale = ImVec2(2.0f, 2.0f);
+#else
         io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
+#endif
     }
 
     io.DeltaTime = deltaTime;
