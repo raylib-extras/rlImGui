@@ -37,9 +37,6 @@
 #include <GLFW/glfw3.h>
 #endif
 
-#if __APPLE__
-#include "osx_utils.h"
-#endif
 #include <math.h>
 #include <map>
 
@@ -106,8 +103,8 @@ static void rlImGuiNewFrame(float deltaTime)
 #if !__APPLE__
       io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
 #else
-      float backingScale = getBackingScaleFactor();
-      io.DisplayFramebufferScale = ImVec2(backingScale, backingScale);
+      Vector2 windowScaleDpi = GetWindowScaleDPI();
+      io.DisplayFramebufferScale = ImVec2(windowScaleDpi.x, windowScaleDpi.y);
 #endif
     }
 
