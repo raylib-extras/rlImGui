@@ -106,6 +106,8 @@ project "raylib"
         ["Source Files/*"] = { raylib_dir .. "/src/**.c"},
     }
     files {raylib_dir .. "/src/*.h", raylib_dir .. "/src/*.c"}
+    removefiles {raylib_dir .. "/src/rcore_android.c", raylib_dir .. "/src/rcore_template.c", raylib_dir .. "/src/rcore_drm.c", raylib_dir .. "/src/rcore_web.c", raylib_dir .."/src/rcore_desktop.c"}
+
     filter { "system:macosx", "files:" .. raylib_dir .. "/src/rglfw.c" }
         compileas "Objective-C"
 
