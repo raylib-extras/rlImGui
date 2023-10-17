@@ -6,7 +6,7 @@
 *
 *   LICENSE: ZLIB
 *
-*   Copyright (c) 2020 Jeffery Myers
+*   Copyright (c) 2023 Jeffery Myers
 *
 *   Permission is hereby granted, free of charge, to any person obtaining a copy
 *   of this software and associated documentation files (the "Software"), to deal
@@ -41,26 +41,32 @@
 extern "C" {
 #endif
 
-// Basic API
+// High level API. This API is designed in the style of raylib and meant to work with reaylib code.
+// It will manage it's own ImGui context and call common ImGui functions (like NewFrame and Render) for you
+// for a lower level API that matches the other ImGui platforms, please see imgui_impl_raylib.h
 
 /// <summary>
 /// Sets up ImGui, loads fonts and themes
+/// Calls ImGui_ImplRaylib_Init and sets the theme. Will install Font awesome by default
 /// </summary>
 /// <param name="darkTheme">when true(default) the dark theme is used, when false the light theme is used</param>
 void rlImGuiSetup(bool darkTheme);
 
 /// <summary>
 /// Starts a new ImGui Frame
+/// Calls ImGui_ImplRaylib_NewFrame, ImGui_ImplRaylib_ProcessEvents, and ImGui::NewFrame together
 /// </summary>
 void rlImGuiBegin();
 
 /// <summary>
 /// Ends an ImGui frame and submits all ImGui drawing to raylib for processing.
+/// Calls ImGui:Render, an d ImGui_ImplRaylib_RenderDrawData to draw to the current raylib render target
 /// </summary>
 void rlImGuiEnd();
 
 /// <summary>
 /// Cleanup ImGui and unload font atlas
+/// Calls ImGui_ImplRaylib_Shutdown
 /// </summary>
 void rlImGuiShutdown();
 
@@ -69,12 +75,14 @@ void rlImGuiShutdown();
 /// <summary>
 /// Custom initialization. Not needed if you call rlImGuiSetup. Only needed if you want to add custom setup code.
 /// must be followed by rlImGuiEndInitImGui
+/// Called by ImGui_ImplRaylib_Init, and does the first part of setup, before fonts are rendered
 /// </summary>
 void rlImGuiBeginInitImGui();
 
 /// <summary>
 /// End Custom initialization. Not needed if you call rlImGuiSetup. Only needed if you want to add custom setup code.
 /// must be proceeded by rlImGuiBeginInitImGui
+/// Called by ImGui_ImplRaylib_Init and does the second part of setup, and renders fonts.
 /// </summary>
 void rlImGuiEndInitImGui();
 
@@ -91,7 +99,9 @@ void rlImGuiReloadFonts();
 /// <param name="dt">delta time, any value < 0 will use raylib GetFrameTime</param>
 void rlImGuiBeginDelta(float deltaTime);
 
-// image API
+// ImGui Image API extensions
+// Purely for convenience in working with raylib textures as images.
+// If you want to call ImGui image functions directly, simply pass them the pointer to the texture.
 
 /// <summary>
 /// Draw a texture as an image in an ImGui Context
