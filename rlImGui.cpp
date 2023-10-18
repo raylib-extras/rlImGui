@@ -470,7 +470,8 @@ void rlImGuiImage(const Texture* image)
 {
 	if (!image)
 		return;
-    ImGui::SetCurrentContext(GlobalContext);
+	if (GlobalContext)
+		ImGui::SetCurrentContext(GlobalContext);
     ImGui::Image((ImTextureID)image, ImVec2(float(image->width), float(image->height)));
 }
 
@@ -478,7 +479,8 @@ bool rlImGuiImageButton(const char* name, const Texture* image)
 {
 	if (!image)
 		return false;
-    ImGui::SetCurrentContext(GlobalContext);
+	if (GlobalContext)
+		ImGui::SetCurrentContext(GlobalContext);
     return ImGui::ImageButton(name, (ImTextureID)image, ImVec2(float(image->width), float(image->height)));
 }
 
@@ -486,7 +488,8 @@ bool rlImGuiImageButtonSize(const char* name, const Texture* image, ImVec2 size)
 {
 	if (!image)
 		return false;
-    ImGui::SetCurrentContext(GlobalContext);
+	if (GlobalContext)
+		ImGui::SetCurrentContext(GlobalContext);
     return ImGui::ImageButton(name, (ImTextureID)image, size);
 }
 
@@ -494,7 +497,8 @@ void rlImGuiImageSize(const Texture* image, int width, int height)
 {
 	if (!image)
 		return;
-    ImGui::SetCurrentContext(GlobalContext);
+	if (GlobalContext)
+		ImGui::SetCurrentContext(GlobalContext);
     ImGui::Image((ImTextureID)image, ImVec2(float(width), float(height)));
 }
 
@@ -502,7 +506,8 @@ void rlImGuiImageSizeV(const Texture* image, Vector2 size)
 {
 	if (!image)
 		return;
-    ImGui::SetCurrentContext(GlobalContext);
+	if (GlobalContext)
+		ImGui::SetCurrentContext(GlobalContext);
 	ImGui::Image((ImTextureID)image, ImVec2(size.x, size.y));
 }
 
@@ -510,7 +515,8 @@ void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Recta
 {
 	if (!image)
 		return;
-    ImGui::SetCurrentContext(GlobalContext);
+	if (GlobalContext)
+		ImGui::SetCurrentContext(GlobalContext);
     ImVec2 uv0;
     ImVec2 uv1;
 
@@ -543,7 +549,8 @@ void rlImGuiImageRenderTexture(const RenderTexture* image)
 {
     if (!image)
         return;
-    ImGui::SetCurrentContext(GlobalContext);
+    if (GlobalContext)
+        ImGui::SetCurrentContext(GlobalContext);
     rlImGuiImageRect(&image->texture, image->texture.width, image->texture.height, Rectangle{ 0,0, float(image->texture.width), -float(image->texture.height) });
 }
 
@@ -551,7 +558,9 @@ void rlImGuiImageRenderTextureFit(const RenderTexture* image, bool center)
 {
 	if (!image)
 		return;
-    ImGui::SetCurrentContext(GlobalContext);
+	if (GlobalContext)
+		ImGui::SetCurrentContext(GlobalContext);
+
     ImVec2 area = ImGui::GetContentRegionAvail();
 
     float scale =  area.x / image->texture.width;
