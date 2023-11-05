@@ -135,18 +135,20 @@ static void ImGuiNewFrame(float deltaTime)
     }
     else
     {
-        io.MousePos.x = (float)GetMouseX();
-        io.MousePos.y = (float)GetMouseY();
+        io.AddMousePosEvent((float)GetMouseX(), (float)GetMouseY());
     }
 
-    io.MouseDown[0] = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
-    io.MouseDown[1] = IsMouseButtonDown(MOUSE_RIGHT_BUTTON);
-    io.MouseDown[2] = IsMouseButtonDown(MOUSE_MIDDLE_BUTTON);
+    for (int i = 0; i < 5; i++)
+    {
+        if (IsMouseButtonPressed(i))
+            io.AddMouseButtonEvent(i, true);
+        else if (IsMouseButtonReleased(i))
+            io.AddMouseButtonEvent(i, false);
+    }
 
     {
         Vector2 mouseWheel = GetMouseWheelMoveV();
-        io.MouseWheel += mouseWheel.y;
-        io.MouseWheelH += mouseWheel.x;
+        io.AddMouseWheelEvent(mouseWheel.x, mouseWheel.y);
     }
 
     if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) == 0)
