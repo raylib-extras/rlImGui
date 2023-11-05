@@ -138,13 +138,19 @@ static void ImGuiNewFrame(float deltaTime)
         io.AddMousePosEvent((float)GetMouseX(), (float)GetMouseY());
     }
 
-    for (int i = 0; i < 5; i++)
-    {
-        if (IsMouseButtonPressed(i))
-            io.AddMouseButtonEvent(i, true);
-        else if (IsMouseButtonReleased(i))
-            io.AddMouseButtonEvent(i, false);
-    }
+    auto setMouseEvent = [&io](int rayMouse, int imGuiMouse)
+        {
+			if (IsMouseButtonPressed(rayMouse))
+				io.AddMouseButtonEvent(imGuiMouse, true);
+			else if (IsMouseButtonReleased(rayMouse))
+				io.AddMouseButtonEvent(imGuiMouse, false);
+        };
+
+    setMouseEvent(MOUSE_BUTTON_LEFT, ImGuiMouseButton_Left);
+    setMouseEvent(MOUSE_BUTTON_RIGHT, ImGuiMouseButton_Right);
+    setMouseEvent(MOUSE_BUTTON_MIDDLE, ImGuiMouseButton_Middle);
+    setMouseEvent(MOUSE_BUTTON_FORWARD, ImGuiMouseButton_Middle+1);
+    setMouseEvent(MOUSE_BUTTON_BACK, ImGuiMouseButton_Middle+2);
 
     {
         Vector2 mouseWheel = GetMouseWheelMoveV();
