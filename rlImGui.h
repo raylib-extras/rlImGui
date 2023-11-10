@@ -31,6 +31,7 @@
 #pragma once
 
 #include "raylib.h"
+#include <stdbool.h>
 
 #ifndef NO_FONT_AWESOME
 #include "extras/IconsFontAwesome6.h"
@@ -41,6 +42,12 @@
 extern "C" {
 #endif
 
+struct igSetupOptions {
+    bool    dark;
+    char    font_path[512];
+    int     font_size_pixels;
+};
+
 // High level API. This API is designed in the style of raylib and meant to work with reaylib code.
 // It will manage it's own ImGui context and call common ImGui functions (like NewFrame and Render) for you
 // for a lower level API that matches the other ImGui platforms, please see imgui_impl_raylib.h
@@ -50,7 +57,7 @@ extern "C" {
 /// Calls ImGui_ImplRaylib_Init and sets the theme. Will install Font awesome by default
 /// </summary>
 /// <param name="darkTheme">when true(default) the dark theme is used, when false the light theme is used</param>
-void rlImGuiSetup(bool darkTheme);
+void rlImGuiSetup(struct igSetupOptions *opts);
 
 /// <summary>
 /// Starts a new ImGui Frame

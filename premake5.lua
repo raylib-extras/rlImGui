@@ -47,7 +47,7 @@ function check_raylib()
 		end
 		print("Unzipping to " ..  os.getcwd())
 		zip.extract("raylib-master.zip", os.getcwd())
-		os.remove("raylib-master.zip")
+		--os.remove("raylib-master.zip")
 	end
 end
 
@@ -62,7 +62,7 @@ function check_imgui()
 		end
 		print("Unzipping to " ..  os.getcwd())
 		zip.extract("imgui-master.zip", os.getcwd())
-		os.remove("imgui-master.zip")
+		--os.remove("imgui-master.zip")
 	end
 end
 

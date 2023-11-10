@@ -416,7 +416,7 @@ static void SetupGlobals()
 
 }
 
-void rlImGuiBeginInitImGui()
+void rlImGuiBeginInitImGui(struct igSetupOptions *opts)
 {
     SetupGlobals();
     GlobalContext = ImGui::CreateContext(nullptr);
@@ -424,13 +424,27 @@ void rlImGuiBeginInitImGui()
 
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
+
+    if (!opts)
+        io.Fonts->AddFontDefault();
+    else {
+        if (string(opts->font_path).size() > 0)
+            io.Fonts->AddFontFromFileTTF(opts->font_path, opts->font_size_pixels);
+    }
 }
 
-void rlImGuiSetup(bool dark)
-{
-    rlImGuiBeginInitImGui();
+bool is_inited = false;
 
-    if (dark)
+void rlImGuiSetup(struct igSetupOptions *opts)
+{
+    if (is_inited) {
+        printf("rlImGuiSetup(): already inited\n");
+        return;
+    }
+
+    rlImGuiBeginInitImGui(opts);
+
+    if (opts && opts->dark)
         ImGui::StyleColorsDark();
     else
         ImGui::StyleColorsLight();
@@ -468,10 +482,15 @@ void rlImGuiEnd()
 
 void rlImGuiShutdown()
 {
+    if (!is_inited) {
+        return
+    }
+
 	ImGui::SetCurrentContext(GlobalContext);
     ImGui_ImplRaylib_Shutdown();
 
     ImGui::DestroyContext();
+    is_inited = false;
 }
 
 void rlImGuiImage(const Texture* image)
