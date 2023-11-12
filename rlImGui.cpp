@@ -599,18 +599,16 @@ bool ImGui_ImplRaylib_Init()
 
 	SetupKeymap();
 
-	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontDefault();
-
-    SetupFontAwesome();
-
 	SetupMouseCursors();
 
     SetupBackend();
 
-    ReloadFonts();
-
     return true;
+}
+
+void Imgui_ImplRaylib_BuildFontAtlas()
+{
+    ReloadFonts();
 }
 
 void ImGui_ImplRaylib_Shutdown()
