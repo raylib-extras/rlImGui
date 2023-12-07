@@ -616,10 +616,11 @@ void ImGui_ImplRaylib_Shutdown()
     ImGuiIO& io =ImGui::GetIO();
     Texture2D* fontTexture = (Texture2D*)io.Fonts->TexID;
 
-    if (fontTexture && fontTexture->id != 0)
-	    UnloadTexture(*fontTexture);
-
-    MemFree(fontTexture);
+    if (fontTexture)
+    {
+        UnloadTexture(*fontTexture);
+        MemFree(fontTexture);
+    }
 
     io.Fonts->TexID = 0;
 }
