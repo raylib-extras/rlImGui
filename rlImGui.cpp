@@ -617,7 +617,9 @@ void ImGui_ImplRaylib_Shutdown()
     Texture2D* fontTexture = (Texture2D*)io.Fonts->TexID;
 
     if (fontTexture && fontTexture->id != 0)
-	UnloadTexture(*fontTexture);
+	    UnloadTexture(*fontTexture);
+
+    MemFree(fontTexture);
 
     io.Fonts->TexID = 0;
 }
