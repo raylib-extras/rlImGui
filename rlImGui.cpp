@@ -254,7 +254,7 @@ static void EnableScissor(float x, float y, float width, float height)
     rlEnableScissorTest();
     ImGuiIO& io = ImGui::GetIO();
     rlScissor((int)(x * io.DisplayFramebufferScale.x),
-        int((GetScreenHeight() - (int)(y + height)) * io.DisplayFramebufferScale.y),
+        int((io.DisplaySize.y - (int)(y + height)) * io.DisplayFramebufferScale.y),
         (int)(width * io.DisplayFramebufferScale.x),
         (int)(height * io.DisplayFramebufferScale.y));
 }
