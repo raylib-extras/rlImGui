@@ -71,4 +71,5 @@ bool rlImGuiImageButtonSize(const char* name, const Texture* image, struct ImVec
 ImGui is a C++ library, so rlImGui uses C++ to create the backend and integration with Raylib.
 The rlImGui.h API only uses features that are common to C and C++, so rlImGui can be built as a static library and used by pure C code. Users of ImGui who wish to use pure C must use an ImGui wrapper, such as [https://github.com/cimgui/cimgui].
 
-
+# Low level API
+If you would like more controll over the ImGui Backend, you can use the low level API that is found in imgui_impl_raylib.h. This is API follows the patterns of other ImGui backends and does not do automatic context management. An example of it's use can be found in imgui_style_example.cpp 

@@ -6,7 +6,7 @@
 *
 *   LICENSE: ZLIB
 *
-*   Copyright (c) 2020 Jeffery Myers
+*   Copyright (c) 2023 Jeffery Myers
 *
 *   Permission is hereby granted, free of charge, to any person obtaining a copy
 *   of this software and associated documentation files (the "Software"), to deal
@@ -28,20 +28,27 @@
 *
 **********************************************************************************************/
 
+// dear imgui: Platform Backend for Raylib
+// (Info: Raylib is a cross-platform general purpose library for handling windows, inputs, graphics context creation, etc. using OpenGL)
+// This is is the low level ImGui backend for raylib, a higher level API that matches the raylib API can be found in rlImGui.h
+
+// You can use unmodified imgui_impl_* files in your project. See examples/ folder for examples of using this.
+// Prefer including the entire imgui/ repository into your project (either as a copy or as a submodule), and only build the backends you need.
+// Learn about Dear ImGui:
+// - FAQ                  https://dearimgui.com/faq
+// - Getting Started      https://dearimgui.com/getting-started
+// - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
+// - Introduction, links and more at the top of imgui.cpp
+
 #pragma once
+#include "imgui.h"      // IMGUI_IMPL_API
+#ifndef IMGUI_DISABLE
 
-#include "raylib.h"
-#include "imgui.h"
+IMGUI_IMPL_API bool ImGui_ImplRaylib_Init();
+IMGUI_IMPL_API void Imgui_ImplRaylib_BuildFontAtlas();
+IMGUI_IMPL_API void ImGui_ImplRaylib_Shutdown();
+IMGUI_IMPL_API void ImGui_ImplRaylib_NewFrame();
+IMGUI_IMPL_API void ImGui_ImplRaylib_RenderDrawData(ImDrawData* draw_data);
+IMGUI_IMPL_API bool ImGui_ImplRaylib_ProcessEvents();
 
-namespace rlImGuiColors
-{
-    inline ImVec4 Convert(::Color color)
-    {
-        return ImVec4(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f);
-    }
-
-    inline ::Color Convert(ImVec4 color)
-    {
-        return ::Color{ (unsigned char)(color.x * 255.0f), (unsigned char)(color.y * 255.0f), (unsigned char)(color.z * 255.0f), (unsigned char)(color.w * 255.0f) };
-    }
-}
+#endif // #ifndef IMGUI_DISABLE
