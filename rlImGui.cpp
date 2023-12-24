@@ -34,10 +34,6 @@
 #include "raylib.h"
 #include "rlgl.h"
 
-#ifdef PLATFORM_DESKTOP
-#include <GLFW/glfw3.h>
-#endif
-
 #include <math.h>
 #include <map>
 
@@ -113,19 +109,10 @@ static void ImGuiNewFrame(float deltaTime)
         io.DisplaySize.x = float(GetScreenWidth());
         io.DisplaySize.y = float(GetScreenHeight());
     }
-
-    int width = int(io.DisplaySize.x), height = int(io.DisplaySize.y);
-#ifdef PLATFORM_DESKTOP
-    glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
-#endif
-    if (width > 0 && height > 0) 
-    {
-        io.DisplayFramebufferScale = ImVec2(width / io.DisplaySize.x, height / io.DisplaySize.y);
-    }
-    else 
-    {
-        io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
-    }
+    
+    const Vector2 ResolutionScale = GetWindowScaleDPI();
+    
+    io.DisplayFramebufferScale = ImVec2(ResolutionScale.x, ResolutionScale.y);
 
     io.DeltaTime = deltaTime;
 
