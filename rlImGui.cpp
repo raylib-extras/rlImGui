@@ -269,7 +269,7 @@ void SetupBackend()
     ImGuiIO& io = ImGui::GetIO();
 	io.BackendPlatformName = "imgui_impl_raylib";
 
-	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors | ImGuiBackendFlags_HasGamepad | ImGuiBackendFlags_HasSetMousePos;
 
 	io.MousePos = ImVec2(0, 0);
 
@@ -672,6 +672,14 @@ void ImGui_ImplRaylib_RenderDrawData(ImDrawData* draw_data)
 	rlEnableBackfaceCulling();
 }
 
+void HandleGamepadButtonevent(ImGuiIO& io, GamepadButton button, ImGuiKey key)
+{
+    if (IsGamepadButtonPressed(0, button))
+        io.AddKeyEvent(key, true);
+    else if (IsGamepadButtonReleased(0, button))
+        io.AddKeyEvent(key, false);
+}
+
 bool ImGui_ImplRaylib_ProcessEvents()
 {
 	ImGuiIO& io = ImGui::GetIO();
@@ -726,6 +734,107 @@ bool ImGui_ImplRaylib_ProcessEvents()
 		io.AddInputCharacter(pressed);
 		pressed = GetCharPressed();
 	}
+
+    if (io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad && IsGamepadAvailable(0))
+    {
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_LEFT_FACE_UP, ImGuiKey_GamepadDpadUp);
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_LEFT_FACE_RIGHT, ImGuiKey_GamepadDpadRight);
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_LEFT_FACE_DOWN, ImGuiKey_GamepadDpadDown);
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_LEFT_FACE_LEFT, ImGuiKey_GamepadDpadLeft);
+
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_RIGHT_FACE_UP, ImGuiKey_GamepadFaceUp);
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT, ImGuiKey_GamepadFaceLeft);
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_RIGHT_FACE_DOWN, ImGuiKey_GamepadFaceDown);
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_RIGHT_FACE_LEFT, ImGuiKey_GamepadFaceRight);
+
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_LEFT_TRIGGER_1, ImGuiKey_GamepadL1);
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_LEFT_TRIGGER_2, ImGuiKey_GamepadL2);
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_RIGHT_TRIGGER_1, ImGuiKey_GamepadR1);
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_RIGHT_TRIGGER_2, ImGuiKey_GamepadR2);
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_LEFT_THUMB, ImGuiKey_GamepadL3);
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_RIGHT_THUMB, ImGuiKey_GamepadR3);
+
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_MIDDLE_LEFT, ImGuiKey_GamepadStart);
+        HandleGamepadButtonevent(io, GAMEPAD_BUTTON_MIDDLE_RIGHT, ImGuiKey_GamepadBack);
+
+        constexpr float deadZone = 0.15f;
+
+        // left stick
+        float leftX = GetGamepadAxisMovement(0, GAMEPAD_AXIS_LEFT_X);
+        float leftY = GetGamepadAxisMovement(0, GAMEPAD_AXIS_LEFT_Y);
+
+        // x axis
+        if (leftX < -deadZone)
+        {
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickLeft, true, -leftX);
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickRight, false, 0);
+        }
+        else if (leftX > deadZone)
+        {
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickRight, true, leftX);
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickLeft, false, 0);
+        }
+        else
+        {
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickRight, false, 0);
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickLeft, false, 0);
+        }
+
+        // y axis
+        if (leftY < -deadZone)
+        {
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickUp, true, -leftY);
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickDown, false, 0);
+        }
+        else if (leftY > deadZone)
+        {
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickDown, true, leftY);
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickUp, false, 0);
+        }
+        else
+        {
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickUp, false, 0);
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickDown, false, 0);
+        }
+
+        // right stick
+        float rightX = GetGamepadAxisMovement(0, GAMEPAD_AXIS_RIGHT_X);
+        float rightY = GetGamepadAxisMovement(0, GAMEPAD_AXIS_RIGHT_Y);
+
+        // x axis
+        if (rightX < -deadZone)
+        {
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickLeft, true, -rightX);
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickRight, false, 0);
+        }
+        else if (rightX > deadZone)
+        {
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickRight, true, rightX);
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickLeft, false, 0);
+        }
+        else
+        {
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickRight, false, 0);
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickLeft, false, 0);
+        }
+
+        // y axis
+        if (rightY < -deadZone)
+        {
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickUp, true, -rightY);
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickDown, false, 0);
+        }
+        else if (rightY > deadZone)
+        {
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickDown, true, rightY);
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickUp, false, 0);
+        }
+        else
+        {
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickUp, false, 0);
+            io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickDown, false, 0);
+        }
+    }
 
     return true;
 }
