@@ -110,8 +110,11 @@ static void ImGuiNewFrame(float deltaTime)
         io.DisplaySize.y = float(GetScreenHeight());
     }
     
-    const Vector2 resolutionScale = GetWindowScaleDPI();
+    Vector2 resolutionScale = GetWindowScaleDPI();
     
+    if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
+        resolutionScale = Vector2{ 1,1 };
+
     io.DisplayFramebufferScale = ImVec2(resolutionScale.x, resolutionScale.y);
 
     io.DeltaTime = deltaTime;
@@ -215,10 +218,19 @@ static void EnableScissor(float x, float y, float width, float height)
 {
     rlEnableScissorTest();
     ImGuiIO& io = ImGui::GetIO();
-    rlScissor((int)(x * io.DisplayFramebufferScale.x),
-        int((io.DisplaySize.y - (int)(y + height)) * io.DisplayFramebufferScale.y),
-        (int)(width * io.DisplayFramebufferScale.x),
-        (int)(height * io.DisplayFramebufferScale.y));
+
+    ImVec2 scale = io.DisplayFramebufferScale;
+
+    if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
+    {
+        scale.x = 1;
+        scale.y = 1;
+    }
+
+    rlScissor((int)(x * scale.x),
+        int((io.DisplaySize.y - (int)(y + height)) * scale.y),
+        (int)(width * scale.x),
+        (int)(height * scale.y));
 }
 
 static void SetupMouseCursors()
