@@ -112,8 +112,10 @@ static void ImGuiNewFrame(float deltaTime)
     
     Vector2 resolutionScale = GetWindowScaleDPI();
     
+#if !defined(__APPLE__)
     if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
         resolutionScale = Vector2{ 1,1 };
+#endif
 
     io.DisplayFramebufferScale = ImVec2(resolutionScale.x, resolutionScale.y);
 
@@ -220,12 +222,13 @@ static void EnableScissor(float x, float y, float width, float height)
     ImGuiIO& io = ImGui::GetIO();
 
     ImVec2 scale = io.DisplayFramebufferScale;
-
+#if !defined(__APPLE__)
     if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
     {
         scale.x = 1;
         scale.y = 1;
     }
+#endif
 
     rlScissor((int)(x * scale.x),
         int((io.DisplaySize.y - (int)(y + height)) * scale.y),
