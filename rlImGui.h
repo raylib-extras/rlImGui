@@ -167,7 +167,7 @@ bool rlImGuiImageButton(const char* name, const Texture* image);
 /// </summary>
 /// <param name="name">The display name and ImGui ID for the button</param>
 /// <param name="image">The texture to draw</param>
-/// <param name="size">The size of the button/param>
+/// <param name="size">The size of the button</param>
 /// <returns>True if the button was clicked</returns>
 bool rlImGuiImageButtonSize(const char* name, const Texture* image, struct ImVec2 size);
 
