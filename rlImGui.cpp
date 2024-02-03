@@ -36,6 +36,7 @@
 
 #include <math.h>
 #include <map>
+#include <limits>
 
 #ifndef NO_FONT_AWESOME
 #include "extras/FA6FreeSolidFontData.h"
@@ -258,11 +259,16 @@ void SetupFontAwesome()
 	icons_config.PixelSnapH = true;
 	icons_config.FontDataOwnedByAtlas = false;
 
+    icons_config.GlyphMaxAdvanceX = std::numeric_limits<float>::max();
+    icons_config.RasterizerMultiply = 1.0f;
+    icons_config.OversampleH = 2;
+    icons_config.OversampleV = 1;
+
 	icons_config.GlyphRanges = icons_ranges;
 
     ImGuiIO& io = ImGui::GetIO();
 
-	io.Fonts->AddFontFromMemoryCompressedTTF((void*)fa_solid_900_compressed_data, fa_solid_900_compressed_size, FONT_AWESOME_ICON_SIZE, &icons_config, icons_ranges);
+	auto* fontPtr = io.Fonts->AddFontFromMemoryCompressedTTF((void*)fa_solid_900_compressed_data, fa_solid_900_compressed_size, FONT_AWESOME_ICON_SIZE, &icons_config, icons_ranges);
 #endif
 
 }
@@ -420,7 +426,8 @@ static void SetupGlobals()
 void rlImGuiBeginInitImGui()
 {
     SetupGlobals();
-    GlobalContext = ImGui::CreateContext(nullptr);
+    if (GlobalContext == nullptr)
+        GlobalContext = ImGui::CreateContext(nullptr);
     SetupKeymap();
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -469,10 +476,14 @@ void rlImGuiEnd()
 
 void rlImGuiShutdown()
 {
+    if (GlobalContext != nullptr)
+        return;
+
 	ImGui::SetCurrentContext(GlobalContext);
     ImGui_ImplRaylib_Shutdown();
 
-    ImGui::DestroyContext();
+    ImGui::DestroyContext(GlobalContext);
+    GlobalContext = nullptr;
 }
 
 void rlImGuiImage(const Texture* image)
