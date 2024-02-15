@@ -61,7 +61,7 @@ bool rlImGuiIsShiftDown() { return IsKeyDown(KEY_RIGHT_SHIFT) || IsKeyDown(KEY_L
 bool rlImGuiIsAltDown() { return IsKeyDown(KEY_RIGHT_ALT) || IsKeyDown(KEY_LEFT_ALT); }
 bool rlImGuiIsSuperDown() { return IsKeyDown(KEY_RIGHT_SUPER) || IsKeyDown(KEY_LEFT_SUPER); }
 
-void ReloadFonts()
+void ReloadFonts(void)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	unsigned char* pixels = nullptr;
@@ -237,7 +237,7 @@ static void EnableScissor(float x, float y, float width, float height)
         (int)(height * scale.y));
 }
 
-static void SetupMouseCursors()
+static void SetupMouseCursors(void)
 {
     MouseCursorMap[ImGuiMouseCursor_Arrow] = MOUSE_CURSOR_ARROW;
     MouseCursorMap[ImGuiMouseCursor_TextInput] = MOUSE_CURSOR_IBEAM;
@@ -250,7 +250,7 @@ static void SetupMouseCursors()
     MouseCursorMap[ImGuiMouseCursor_NotAllowed] = MOUSE_CURSOR_NOT_ALLOWED;
 }
 
-void SetupFontAwesome()
+void SetupFontAwesome(void)
 {
 #ifndef NO_FONT_AWESOME
 	static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
@@ -273,7 +273,7 @@ void SetupFontAwesome()
 
 }
 
-void SetupBackend()
+void SetupBackend(void)
 {
     ImGuiIO& io = ImGui::GetIO();
 	io.BackendPlatformName = "imgui_impl_raylib";
@@ -288,7 +288,7 @@ void SetupBackend()
 	io.ClipboardUserData = nullptr;
 }
 
-void rlImGuiEndInitImGui()
+void rlImGuiEndInitImGui(void)
 {
     ImGui::SetCurrentContext(GlobalContext);
 
@@ -301,7 +301,7 @@ void rlImGuiEndInitImGui()
     ReloadFonts();
 }
 
-static void SetupKeymap()
+static void SetupKeymap(void)
 {
     if (!RaylibKeyMap.empty())
         return;
@@ -414,7 +414,7 @@ static void SetupKeymap()
     RaylibKeyMap[KEY_KP_EQUAL] = ImGuiKey_KeypadEqual;
 }
 
-static void SetupGlobals()
+static void SetupGlobals(void)
 {
 	LastFrameFocused = IsWindowFocused();
 	LastControlPressed = false;
@@ -423,7 +423,7 @@ static void SetupGlobals()
 	LastSuperPressed = false;
 }
 
-void rlImGuiBeginInitImGui()
+void rlImGuiBeginInitImGui(void)
 {
     SetupGlobals();
     if (GlobalContext == nullptr)
@@ -446,14 +446,14 @@ void rlImGuiSetup(bool dark)
     rlImGuiEndInitImGui();
 }
 
-void rlImGuiReloadFonts()
+void rlImGuiReloadFonts(void)
 {
     ImGui::SetCurrentContext(GlobalContext);
 
     ReloadFonts();
 }
 
-void rlImGuiBegin()
+void rlImGuiBegin(void)
 {
     ImGui::SetCurrentContext(GlobalContext);
     rlImGuiBeginDelta(GetFrameTime());
@@ -467,14 +467,14 @@ void rlImGuiBeginDelta(float deltaTime)
 	ImGui::NewFrame();
 }
 
-void rlImGuiEnd()
+void rlImGuiEnd(void)
 {
     ImGui::SetCurrentContext(GlobalContext);
     ImGui::Render();
     ImGui_ImplRaylib_RenderDrawData(ImGui::GetDrawData());
 }
 
-void rlImGuiShutdown()
+void rlImGuiShutdown(void)
 {
     if (GlobalContext != nullptr)
         return;
@@ -620,7 +620,7 @@ void rlImGuiImageRenderTextureFit(const RenderTexture* image, bool center)
 }
 
 // raw ImGui backend API
-bool ImGui_ImplRaylib_Init()
+bool ImGui_ImplRaylib_Init(void)
 {
     SetupGlobals();
 
@@ -633,7 +633,7 @@ bool ImGui_ImplRaylib_Init()
     return true;
 }
 
-void Imgui_ImplRaylib_BuildFontAtlas()
+void Imgui_ImplRaylib_BuildFontAtlas(void)
 {
     ReloadFonts();
 }
@@ -652,7 +652,7 @@ void ImGui_ImplRaylib_Shutdown()
     io.Fonts->TexID = 0;
 }
 
-void ImGui_ImplRaylib_NewFrame()
+void ImGui_ImplRaylib_NewFrame(void)
 {
     ImGuiNewFrame(GetFrameTime());
 }
@@ -704,7 +704,7 @@ void HandleGamepadStickEvent(ImGuiIO& io, GamepadAxis axis, ImGuiKey negKey, ImG
     io.AddKeyAnalogEvent(posKey, axisValue > deadZone, axisValue > deadZone ? axisValue : 0);
 }
 
-bool ImGui_ImplRaylib_ProcessEvents()
+bool ImGui_ImplRaylib_ProcessEvents(void)
 {
 	ImGuiIO& io = ImGui::GetIO();
 
