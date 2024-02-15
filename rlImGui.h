@@ -56,19 +56,19 @@ void rlImGuiSetup(bool darkTheme);
 /// Starts a new ImGui Frame
 /// Calls ImGui_ImplRaylib_NewFrame, ImGui_ImplRaylib_ProcessEvents, and ImGui::NewFrame together
 /// </summary>
-void rlImGuiBegin();
+void rlImGuiBegin(void);
 
 /// <summary>
 /// Ends an ImGui frame and submits all ImGui drawing to raylib for processing.
 /// Calls ImGui:Render, an d ImGui_ImplRaylib_RenderDrawData to draw to the current raylib render target
 /// </summary>
-void rlImGuiEnd();
+void rlImGuiEnd(void);
 
 /// <summary>
 /// Cleanup ImGui and unload font atlas
 /// Calls ImGui_ImplRaylib_Shutdown
 /// </summary>
-void rlImGuiShutdown();
+void rlImGuiShutdown(void);
 
 // Advanced StartupAPI
 
@@ -77,19 +77,19 @@ void rlImGuiShutdown();
 /// must be followed by rlImGuiEndInitImGui
 /// Called by ImGui_ImplRaylib_Init, and does the first part of setup, before fonts are rendered
 /// </summary>
-void rlImGuiBeginInitImGui();
+void rlImGuiBeginInitImGui(void);
 
 /// <summary>
 /// End Custom initialization. Not needed if you call rlImGuiSetup. Only needed if you want to add custom setup code.
 /// must be proceeded by rlImGuiBeginInitImGui
 /// Called by ImGui_ImplRaylib_Init and does the second part of setup, and renders fonts.
 /// </summary>
-void rlImGuiEndInitImGui();
+void rlImGuiEndInitImGui(void);
 
 /// <summary>
 /// Forces the font texture atlas to be recomputed and re-cached
 /// </summary>
-void rlImGuiReloadFonts();
+void rlImGuiReloadFonts(void);
 
 // Advanced Update API
 
