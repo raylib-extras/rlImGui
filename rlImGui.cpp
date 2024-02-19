@@ -196,12 +196,6 @@ static void ImGuiRenderTriangles(unsigned int count, int indexStart, const ImVec
 
     for (unsigned int i = 0; i <= (count - 3); i += 3)
     {
-        if (rlCheckRenderBatchLimit(3))
-        {
-            rlBegin(RL_TRIANGLES);
-            rlSetTexture(textureId);
-        }
-
         ImDrawIdx indexA = indexBuffer[indexStart + i];
         ImDrawIdx indexB = indexBuffer[indexStart + i + 1];
         ImDrawIdx indexC = indexBuffer[indexStart + i + 2];
