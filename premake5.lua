@@ -81,6 +81,10 @@ workspace "rlImGui"
 		
 	filter { "platforms:x64" }
 		architecture "x86_64"
+
+	filter { "system:linux" }
+		defines { "_GLFW_X11" }
+		defines { "_GNU_SOURCE" }
 		
 	targetdir "bin/%{cfg.buildcfg}/"
 	
