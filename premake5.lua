@@ -98,8 +98,8 @@ workspace "rlImGui"
 		
 project "rlImGui"
 	kind "StaticLib"
-	location "_build"
-	targetdir "_bin/%{cfg.buildcfg}"
+	location "build"
+	targetdir "bin/%{cfg.buildcfg}"
 	language "C++"
 	
 	include_raylib()
@@ -118,8 +118,8 @@ group "Examples"
 project "simple"
 	kind "ConsoleApp"
 	language "C++"
-	location "_build"
-	targetdir "_bin/%{cfg.buildcfg}"
+	location "build"
+	targetdir "bin/%{cfg.buildcfg}"
 	
 	vpaths 
 	{
@@ -138,8 +138,8 @@ project "simple"
 project "editor"
 	kind "ConsoleApp"
 	language "C++"
-	location "_build"
-	targetdir "_bin/%{cfg.buildcfg}"
+	location "build"
+	targetdir "bin/%{cfg.buildcfg}"
 
 
 	vpaths 
@@ -159,8 +159,8 @@ project "editor"
 project "imgui_style_example"
 	kind "ConsoleApp"
 	language "C++"
-	location "_build"
-	targetdir "_bin/%{cfg.buildcfg}"
+	location "build"
+	targetdir "bin/%{cfg.buildcfg}"
 	
 	vpaths 
 	{
@@ -173,5 +173,5 @@ project "imgui_style_example"
 	includedirs {"./", "imgui", "imgui-master" }
 		
     filter "action:vs*"
-		debugdir "$(SolutionDir)"	
+		debugdir "$(SolutionDir)"
 	

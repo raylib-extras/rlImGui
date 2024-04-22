@@ -1,3 +1,19 @@
+-- Copyright (c) 2020-2024 Jeffery Myers
+--
+--This software is provided "as-is", without any express or implied warranty. In no event 
+--will the authors be held liable for any damages arising from the use of this software.
+
+--Permission is granted to anyone to use this software for any purpose, including commercial 
+--applications, and to alter it and redistribute it freely, subject to the following restrictions:
+
+--  1. The origin of this software must not be misrepresented; you must not claim that you 
+--  wrote the original software. If you use this software in a product, an acknowledgment 
+--  in the product documentation would be appreciated but is not required.
+--
+--  2. Altered source versions must be plainly marked as such, and must not be misrepresented
+--  as being the original software.
+--
+--  3. This notice may not be removed or altered from any source distribution.
 
 function platform_defines()
     defines{"PLATFORM_DESKTOP"}
@@ -18,6 +34,7 @@ function platform_defines()
         disablewarnings {"deprecated-declarations"}
 
     filter {"system:linux"}
+        defines {"_GLFW_X11"}
         defines {"_GNU_SOURCE"}
 -- This is necessary, otherwise compilation will fail since
 -- there is no CLOCK_MONOTOMIC. raylib claims to have a workaround
@@ -54,17 +71,18 @@ function link_raylib()
         dependson {"raylib"}
         links {"raylib.lib"}
         characterset ("MBCS")
+        buildoptions { "/Zc:__cplusplus" }
 
     filter "system:windows"
         defines{"_WIN32"}
-        links {"winmm", "kernel32", "opengl32", "gdi32"}
-        libdirs {"_bin/%{cfg.buildcfg}"}
+        links {"winmm", "gdi32"}
+        libdirs {"bin/%{cfg.buildcfg}"}
 
     filter "system:linux"
-        links {"pthread", "GL", "m", "dl", "rt", "X11"}
+        links {"pthread", "m", "dl", "rt", "X11"}
 
     filter "system:macosx"
-        links {"OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreFoundation.framework", "CoreAudio.framework", "CoreVideo.framework"}
+        links {"OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreFoundation.framework", "CoreAudio.framework", "CoreVideo.framework", "AudioToolbox.framework"}
 
     filter{}
 end
@@ -87,14 +105,14 @@ project "raylib"
 
     platform_defines()
 
-    location "_build"
+    location "build"
     language "C"
-    targetdir "_bin/%{cfg.buildcfg}"
+    targetdir "bin/%{cfg.buildcfg}"
 
     filter "action:vs*"
         defines{"_WINSOCK_DEPRECATED_NO_WARNINGS", "_CRT_SECURE_NO_WARNINGS"}
         characterset ("MBCS")
-
+        buildoptions { "/Zc:__cplusplus" }
     filter{}
 
     raylib_dir = get_raylib_dir();

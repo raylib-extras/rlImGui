@@ -370,3 +370,5 @@ raylib-master
 _build
 Catalog
 imgui-master
+build
+Makefile
