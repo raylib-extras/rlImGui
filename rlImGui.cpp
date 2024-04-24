@@ -707,50 +707,53 @@ bool ImGui_ImplRaylib_ProcessEvents(void)
 		io.AddFocusEvent(focused);
 	LastFrameFocused = focused;
 
-	// handle the modifyer key events so that shortcuts work
-	bool ctrlDown = rlImGuiIsControlDown();
-	if (ctrlDown != LastControlPressed)
-		io.AddKeyEvent(ImGuiMod_Ctrl, ctrlDown);
-	LastControlPressed = ctrlDown;
-
-	bool shiftDown = rlImGuiIsShiftDown();
-	if (shiftDown != LastShiftPressed)
-		io.AddKeyEvent(ImGuiMod_Shift, shiftDown);
-	LastShiftPressed = shiftDown;
-
-	bool altDown = rlImGuiIsAltDown();
-	if (altDown != LastAltPressed)
-		io.AddKeyEvent(ImGuiMod_Alt, altDown);
-	LastAltPressed = altDown;
-
-	bool superDown = rlImGuiIsSuperDown();
-	if (superDown != LastSuperPressed)
-		io.AddKeyEvent(ImGuiMod_Super, superDown);
-	LastSuperPressed = superDown;
-
-	// get the pressed keys, they are in event order
-	int keyId = GetKeyPressed();
-	while (keyId != 0)
+	if (io.WantCaptureKeyboard)
 	{
-		auto keyItr = RaylibKeyMap.find(KeyboardKey(keyId));
-		if (keyItr != RaylibKeyMap.end())
-			io.AddKeyEvent(keyItr->second, true);
-		keyId = GetKeyPressed();
-	}
-
-	// look for any keys that were down last frame and see if they were down and are released
-	for (const auto keyItr : RaylibKeyMap)
-	{
-		if (IsKeyReleased(keyItr.first))
-			io.AddKeyEvent(keyItr.second, false);
-	}
-
-	// add the text input in order
-	unsigned int pressed = GetCharPressed();
-	while (pressed != 0)
-	{
-		io.AddInputCharacter(pressed);
-		pressed = GetCharPressed();
+		// handle the modifier key events so that shortcuts work
+		bool ctrlDown = rlImGuiIsControlDown();
+		if (ctrlDown != LastControlPressed)
+			io.AddKeyEvent(ImGuiMod_Ctrl, ctrlDown);
+		LastControlPressed = ctrlDown;
+	
+		bool shiftDown = rlImGuiIsShiftDown();
+		if (shiftDown != LastShiftPressed)
+			io.AddKeyEvent(ImGuiMod_Shift, shiftDown);
+		LastShiftPressed = shiftDown;
+	
+		bool altDown = rlImGuiIsAltDown();
+		if (altDown != LastAltPressed)
+			io.AddKeyEvent(ImGuiMod_Alt, altDown);
+		LastAltPressed = altDown;
+	
+		bool superDown = rlImGuiIsSuperDown();
+		if (superDown != LastSuperPressed)
+			io.AddKeyEvent(ImGuiMod_Super, superDown);
+		LastSuperPressed = superDown;
+	
+		// get the pressed keys, they are in event order
+		int keyId = GetKeyPressed();
+		while (keyId != 0)
+		{
+			auto keyItr = RaylibKeyMap.find(KeyboardKey(keyId));
+			if (keyItr != RaylibKeyMap.end())
+				io.AddKeyEvent(keyItr->second, true);
+			keyId = GetKeyPressed();
+		}
+	
+		// look for any keys that were down last frame and see if they were down and are released
+		for (const auto keyItr : RaylibKeyMap)
+		{
+			if (IsKeyReleased(keyItr.first))
+				io.AddKeyEvent(keyItr.second, false);
+		}
+	
+		// add the text input in order
+		int pressed = GetCharPressed();
+		while (pressed != 0)
+		{
+			io.AddInputCharacter(pressed);
+			pressed = GetCharPressed();
+		}
 	}
 
     if (io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad && IsGamepadAvailable(0))
