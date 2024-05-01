@@ -728,14 +728,14 @@ bool ImGui_ImplRaylib_ProcessEvents(void)
 		io.AddKeyEvent(ImGuiMod_Super, superDown);
 	LastSuperPressed = superDown;
 
-	// get the pressed keys, they are in event order
-	int keyId = GetKeyPressed();
-	while (keyId != 0)
+	// get the pressed keys, just walk the keys so we don
+	for (int keyId = KEY_NULL; keyId < KeyboardKey::KEY_KP_EQUAL; keyId++)
 	{
+        if (!IsKeyPressed(keyId))
+            continue;
 		auto keyItr = RaylibKeyMap.find(KeyboardKey(keyId));
 		if (keyItr != RaylibKeyMap.end())
 			io.AddKeyEvent(keyItr->second, true);
-		keyId = GetKeyPressed();
 	}
 
 	// look for any keys that were down last frame and see if they were down and are released
@@ -745,13 +745,16 @@ bool ImGui_ImplRaylib_ProcessEvents(void)
 			io.AddKeyEvent(keyItr.second, false);
 	}
 
-	// add the text input in order
-	unsigned int pressed = GetCharPressed();
-	while (pressed != 0)
-	{
-		io.AddInputCharacter(pressed);
-		pressed = GetCharPressed();
-	}
+    if (io.WantCaptureKeyboard)
+    {
+        // add the text input in order
+        unsigned int pressed = GetCharPressed();
+        while (pressed != 0)
+        {
+            io.AddInputCharacter(pressed);
+            pressed = GetCharPressed();
+        }
+    }
 
     if (io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad && IsGamepadAvailable(0))
     {
