@@ -175,3 +175,22 @@ project "imgui_style_example"
     filter "action:vs*"
 		debugdir "$(SolutionDir)"
 	
+project "docking_example"
+	kind "ConsoleApp"
+	language "C++"
+	location "build"
+	targetdir "bin/%{cfg.buildcfg}"
+	
+	vpaths 
+	{
+		["Header Files"] = { "examples/**.h"},
+		["Source Files"] = {"examples/**.cpp", "examples/**.c"},
+	}
+	files {"examples/docking_example.cpp"}
+	link_raylib()
+	links {"rlImGui"}
+	includedirs {"./", "imgui", "imgui-master" }
+		
+    filter "action:vs*"
+		debugdir "$(SolutionDir)"	
+	
