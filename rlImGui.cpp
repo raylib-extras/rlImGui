@@ -99,6 +99,7 @@ static void ImGuiNewFrame(float deltaTime)
 {
     ImGuiIO& io = ImGui::GetIO();
 
+#ifndef PLATFORM_DRM
     if (IsWindowFullscreen())
     {
         int monitor = GetCurrentMonitor();
@@ -112,6 +113,10 @@ static void ImGuiNewFrame(float deltaTime)
     }
     
     Vector2 resolutionScale = GetWindowScaleDPI();
+#else
+    io.DisplaySize.x = float(GetScreenWidth());
+    io.DisplaySize.y = float(GetScreenHeight());
+#endif
     
 #if !defined(__APPLE__)
     if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
@@ -150,23 +155,26 @@ static void ImGuiNewFrame(float deltaTime)
         io.AddMouseWheelEvent(mouseWheel.x, mouseWheel.y);
     }
 
-    if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) == 0)
+    if (ImGui::GetIO().BackendFlags & ImGuiBackendFlags_HasMouseCursors)
     {
-        ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
-        if (imgui_cursor != CurrentMouseCursor || io.MouseDrawCursor)
+        if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) == 0)
         {
-            CurrentMouseCursor = imgui_cursor;
-            if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
+            ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
+            if (imgui_cursor != CurrentMouseCursor || io.MouseDrawCursor)
             {
-                HideCursor();
-            }
-            else
-            {
-                ShowCursor();
-
-                if (!(io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange))
+                CurrentMouseCursor = imgui_cursor;
+                if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
                 {
-                    SetMouseCursor((imgui_cursor > -1 && imgui_cursor < ImGuiMouseCursor_COUNT) ? MouseCursorMap[imgui_cursor] : MOUSE_CURSOR_DEFAULT);
+                    HideCursor();
+                }
+                else
+                {
+                    ShowCursor();
+
+                    if (!(io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange))
+                    {
+                        SetMouseCursor((imgui_cursor > -1 && imgui_cursor < ImGuiMouseCursor_COUNT) ? MouseCursorMap[imgui_cursor] : MOUSE_CURSOR_DEFAULT);
+                    }
                 }
             }
         }
@@ -271,8 +279,11 @@ void SetupBackend(void)
 {
     ImGuiIO& io = ImGui::GetIO();
 	io.BackendPlatformName = "imgui_impl_raylib";
+    io.BackendFlags |= ImGuiBackendFlags_HasGamepad | ImGuiBackendFlags_HasSetMousePos;
 
-	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors | ImGuiBackendFlags_HasGamepad | ImGuiBackendFlags_HasSetMousePos;
+#ifndef PLATFORM_DRM
+	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+#endif
 
 	io.MousePos = ImVec2(0, 0);
 
