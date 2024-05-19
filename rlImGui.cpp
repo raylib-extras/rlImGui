@@ -99,6 +99,9 @@ static void ImGuiNewFrame(float deltaTime)
 {
     ImGuiIO& io = ImGui::GetIO();
 
+
+    Vector2 resolutionScale = GetWindowScaleDPI();
+
 #ifndef PLATFORM_DRM
     if (IsWindowFullscreen())
     {
@@ -111,16 +114,14 @@ static void ImGuiNewFrame(float deltaTime)
         io.DisplaySize.x = float(GetScreenWidth());
         io.DisplaySize.y = float(GetScreenHeight());
     }
-#else
-    io.DisplaySize.x = float(GetScreenWidth());
-    io.DisplaySize.y = float(GetScreenHeight());
-#endif
 
-    Vector2 resolutionScale = GetWindowScaleDPI();
-    
 #if !defined(__APPLE__)
     if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
         resolutionScale = Vector2{ 1,1 };
+#endif
+#else
+    io.DisplaySize.x = float(GetScreenWidth());
+    io.DisplaySize.y = float(GetScreenHeight());
 #endif
 
     io.DisplayFramebufferScale = ImVec2(resolutionScale.x, resolutionScale.y);
