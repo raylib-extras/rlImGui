@@ -63,26 +63,26 @@ bool rlImGuiIsSuperDown() { return IsKeyDown(KEY_RIGHT_SUPER) || IsKeyDown(KEY_L
 
 void ReloadFonts(void)
 {
-	ImGuiIO& io = ImGui::GetIO();
-	unsigned char* pixels = nullptr;
+    ImGuiIO& io = ImGui::GetIO();
+    unsigned char* pixels = nullptr;
 
-	int width;
-	int height;
-	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height, nullptr);
-	Image image = GenImageColor(width, height, BLANK);
-	memcpy(image.data, pixels, width * height * 4);
+    int width;
+    int height;
+    io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height, nullptr);
+    Image image = GenImageColor(width, height, BLANK);
+    memcpy(image.data, pixels, width * height * 4);
 
-	Texture2D* fontTexture = (Texture2D*)io.Fonts->TexID;
-	if (fontTexture && fontTexture->id != 0)
-	{
-		UnloadTexture(*fontTexture);
-		MemFree(fontTexture);
-	}
+    Texture2D* fontTexture = (Texture2D*)io.Fonts->TexID;
+    if (fontTexture && fontTexture->id != 0)
+    {
+        UnloadTexture(*fontTexture);
+        MemFree(fontTexture);
+    }
 
-	fontTexture = (Texture2D*)MemAlloc(sizeof(Texture2D));
-	*fontTexture = LoadTextureFromImage(image);
-	UnloadImage(image);
-	io.Fonts->TexID = fontTexture;
+    fontTexture = (Texture2D*)MemAlloc(sizeof(Texture2D));
+    *fontTexture = LoadTextureFromImage(image);
+    UnloadImage(image);
+    io.Fonts->TexID = fontTexture;
 }
 
 static const char* GetClipTextCallback(void*) 
@@ -111,12 +111,12 @@ static void ImGuiNewFrame(float deltaTime)
         io.DisplaySize.x = float(GetScreenWidth());
         io.DisplaySize.y = float(GetScreenHeight());
     }
-    
-    Vector2 resolutionScale = GetWindowScaleDPI();
 #else
     io.DisplaySize.x = float(GetScreenWidth());
     io.DisplaySize.y = float(GetScreenHeight());
 #endif
+
+    Vector2 resolutionScale = GetWindowScaleDPI();
     
 #if !defined(__APPLE__)
     if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
@@ -138,10 +138,10 @@ static void ImGuiNewFrame(float deltaTime)
 
     auto setMouseEvent = [&io](int rayMouse, int imGuiMouse)
         {
-			if (IsMouseButtonPressed(rayMouse))
-				io.AddMouseButtonEvent(imGuiMouse, true);
-			else if (IsMouseButtonReleased(rayMouse))
-				io.AddMouseButtonEvent(imGuiMouse, false);
+            if (IsMouseButtonPressed(rayMouse))
+                io.AddMouseButtonEvent(imGuiMouse, true);
+            else if (IsMouseButtonReleased(rayMouse))
+                io.AddMouseButtonEvent(imGuiMouse, false);
         };
 
     setMouseEvent(MOUSE_BUTTON_LEFT, ImGuiMouseButton_Left);
@@ -255,18 +255,18 @@ static void SetupMouseCursors(void)
 void SetupFontAwesome(void)
 {
 #ifndef NO_FONT_AWESOME
-	static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
-	ImFontConfig icons_config;
-	icons_config.MergeMode = true;
-	icons_config.PixelSnapH = true;
-	icons_config.FontDataOwnedByAtlas = false;
+    static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+    ImFontConfig icons_config;
+    icons_config.MergeMode = true;
+    icons_config.PixelSnapH = true;
+    icons_config.FontDataOwnedByAtlas = false;
 
     icons_config.GlyphMaxAdvanceX = std::numeric_limits<float>::max();
     icons_config.RasterizerMultiply = 1.0f;
     icons_config.OversampleH = 2;
     icons_config.OversampleV = 1;
 
-	icons_config.GlyphRanges = icons_ranges;
+    icons_config.GlyphRanges = icons_ranges;
 
     ImGuiIO& io = ImGui::GetIO();
 
@@ -278,19 +278,19 @@ void SetupFontAwesome(void)
 void SetupBackend(void)
 {
     ImGuiIO& io = ImGui::GetIO();
-	io.BackendPlatformName = "imgui_impl_raylib";
+    io.BackendPlatformName = "imgui_impl_raylib";
     io.BackendFlags |= ImGuiBackendFlags_HasGamepad | ImGuiBackendFlags_HasSetMousePos;
 
 #ifndef PLATFORM_DRM
-	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+    io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 #endif
 
-	io.MousePos = ImVec2(0, 0);
+    io.MousePos = ImVec2(0, 0);
 
-	io.SetClipboardTextFn = SetClipTextCallback;
-	io.GetClipboardTextFn = GetClipTextCallback;
+    io.SetClipboardTextFn = SetClipTextCallback;
+    io.GetClipboardTextFn = GetClipTextCallback;
 
-	io.ClipboardUserData = nullptr;
+    io.ClipboardUserData = nullptr;
 }
 
 void rlImGuiEndInitImGui(void)
@@ -421,11 +421,11 @@ static void SetupKeymap(void)
 
 static void SetupGlobals(void)
 {
-	LastFrameFocused = IsWindowFocused();
-	LastControlPressed = false;
-	LastShiftPressed = false;
-	LastAltPressed = false;
-	LastSuperPressed = false;
+    LastFrameFocused = IsWindowFocused();
+    LastControlPressed = false;
+    LastShiftPressed = false;
+    LastAltPressed = false;
+    LastSuperPressed = false;
 }
 
 void rlImGuiBeginInitImGui(void)
@@ -435,8 +435,8 @@ void rlImGuiBeginInitImGui(void)
         GlobalContext = ImGui::CreateContext(nullptr);
     SetupKeymap();
 
-	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontDefault();
+    ImGuiIO& io = ImGui::GetIO();
+    io.Fonts->AddFontDefault();
 }
 
 void rlImGuiSetup(bool dark)
@@ -467,9 +467,9 @@ void rlImGuiBegin(void)
 void rlImGuiBeginDelta(float deltaTime)
 {
     ImGui::SetCurrentContext(GlobalContext);
-	ImGuiNewFrame(deltaTime);
+    ImGuiNewFrame(deltaTime);
     ImGui_ImplRaylib_ProcessEvents();
-	ImGui::NewFrame();
+    ImGui::NewFrame();
 }
 
 void rlImGuiEnd(void)
@@ -481,10 +481,10 @@ void rlImGuiEnd(void)
 
 void rlImGuiShutdown(void)
 {
-    if (GlobalContext != nullptr)
+    if (GlobalContext == nullptr)
         return;
 
-	ImGui::SetCurrentContext(GlobalContext);
+    ImGui::SetCurrentContext(GlobalContext);
     ImGui_ImplRaylib_Shutdown();
 
     ImGui::DestroyContext(GlobalContext);
@@ -493,66 +493,66 @@ void rlImGuiShutdown(void)
 
 void rlImGuiImage(const Texture* image)
 {
-	if (!image)
-		return;
-	
+    if (!image)
+        return;
+    
     if (GlobalContext)
-		ImGui::SetCurrentContext(GlobalContext);
+        ImGui::SetCurrentContext(GlobalContext);
     
     ImGui::Image((ImTextureID)image, ImVec2(float(image->width), float(image->height)));
 }
 
 bool rlImGuiImageButton(const char* name, const Texture* image)
 {
-	if (!image)
-		return false;
-	
+    if (!image)
+        return false;
+    
     if (GlobalContext)
-		ImGui::SetCurrentContext(GlobalContext);
+        ImGui::SetCurrentContext(GlobalContext);
     
     return ImGui::ImageButton(name, (ImTextureID)image, ImVec2(float(image->width), float(image->height)));
 }
 
 bool rlImGuiImageButtonSize(const char* name, const Texture* image, ImVec2 size)
 {
-	if (!image)
-		return false;
-	
+    if (!image)
+        return false;
+    
     if (GlobalContext)
-		ImGui::SetCurrentContext(GlobalContext);
+        ImGui::SetCurrentContext(GlobalContext);
    
     return ImGui::ImageButton(name, (ImTextureID)image, size);
 }
 
 void rlImGuiImageSize(const Texture* image, int width, int height)
 {
-	if (!image)
-		return;
-	
+    if (!image)
+        return;
+    
     if (GlobalContext)
-		ImGui::SetCurrentContext(GlobalContext);
+        ImGui::SetCurrentContext(GlobalContext);
     
     ImGui::Image((ImTextureID)image, ImVec2(float(width), float(height)));
 }
 
 void rlImGuiImageSizeV(const Texture* image, Vector2 size)
 {
-	if (!image)
-		return;
-	
+    if (!image)
+        return;
+    
     if (GlobalContext)
-		ImGui::SetCurrentContext(GlobalContext);
-	
+        ImGui::SetCurrentContext(GlobalContext);
+    
     ImGui::Image((ImTextureID)image, ImVec2(size.x, size.y));
 }
 
 void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Rectangle sourceRect)
 {
-	if (!image)
-		return;
-	
+    if (!image)
+        return;
+    
     if (GlobalContext)
-		ImGui::SetCurrentContext(GlobalContext);
+        ImGui::SetCurrentContext(GlobalContext);
     
     ImVec2 uv0;
     ImVec2 uv1;
@@ -595,11 +595,11 @@ void rlImGuiImageRenderTexture(const RenderTexture* image)
 
 void rlImGuiImageRenderTextureFit(const RenderTexture* image, bool center)
 {
-	if (!image)
-		return;
-	
+    if (!image)
+        return;
+    
     if (GlobalContext)
-		ImGui::SetCurrentContext(GlobalContext);
+        ImGui::SetCurrentContext(GlobalContext);
 
     ImVec2 area = ImGui::GetContentRegionAvail();
 
@@ -629,9 +629,9 @@ bool ImGui_ImplRaylib_Init(void)
 {
     SetupGlobals();
 
-	SetupKeymap();
+    SetupKeymap();
 
-	SetupMouseCursors();
+    SetupMouseCursors();
 
     SetupBackend();
 
@@ -664,31 +664,31 @@ void ImGui_ImplRaylib_NewFrame(void)
 
 void ImGui_ImplRaylib_RenderDrawData(ImDrawData* draw_data)
 {
-	rlDrawRenderBatchActive();
-	rlDisableBackfaceCulling();
+    rlDrawRenderBatchActive();
+    rlDisableBackfaceCulling();
 
-	for (int l = 0; l < draw_data->CmdListsCount; ++l)
-	{
-		const ImDrawList* commandList = draw_data->CmdLists[l];
+    for (int l = 0; l < draw_data->CmdListsCount; ++l)
+    {
+        const ImDrawList* commandList = draw_data->CmdLists[l];
 
-		for (const auto& cmd : commandList->CmdBuffer)
-		{
-			EnableScissor(cmd.ClipRect.x - draw_data->DisplayPos.x, cmd.ClipRect.y - draw_data->DisplayPos.y, cmd.ClipRect.z - (cmd.ClipRect.x - draw_data->DisplayPos.x), cmd.ClipRect.w - (cmd.ClipRect.y - draw_data->DisplayPos.y));
-			if (cmd.UserCallback != nullptr)
-			{
-				cmd.UserCallback(commandList, &cmd);
+        for (const auto& cmd : commandList->CmdBuffer)
+        {
+            EnableScissor(cmd.ClipRect.x - draw_data->DisplayPos.x, cmd.ClipRect.y - draw_data->DisplayPos.y, cmd.ClipRect.z - (cmd.ClipRect.x - draw_data->DisplayPos.x), cmd.ClipRect.w - (cmd.ClipRect.y - draw_data->DisplayPos.y));
+            if (cmd.UserCallback != nullptr)
+            {
+                cmd.UserCallback(commandList, &cmd);
 
-				continue;
-			}
+                continue;
+            }
 
-			ImGuiRenderTriangles(cmd.ElemCount, cmd.IdxOffset, commandList->IdxBuffer, commandList->VtxBuffer, cmd.TextureId);
-			rlDrawRenderBatchActive();
-		}
-	}
+            ImGuiRenderTriangles(cmd.ElemCount, cmd.IdxOffset, commandList->IdxBuffer, commandList->VtxBuffer, cmd.TextureId);
+            rlDrawRenderBatchActive();
+        }
+    }
 
-	rlSetTexture(0);
-	rlDisableScissorTest();
-	rlEnableBackfaceCulling();
+    rlSetTexture(0);
+    rlDisableScissorTest();
+    rlEnableBackfaceCulling();
 }
 
 void HandleGamepadButtonEvent(ImGuiIO& io, GamepadButton button, ImGuiKey key)
@@ -711,50 +711,50 @@ void HandleGamepadStickEvent(ImGuiIO& io, GamepadAxis axis, ImGuiKey negKey, ImG
 
 bool ImGui_ImplRaylib_ProcessEvents(void)
 {
-	ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
 
-	bool focused = IsWindowFocused();
-	if (focused != LastFrameFocused)
-		io.AddFocusEvent(focused);
-	LastFrameFocused = focused;
+    bool focused = IsWindowFocused();
+    if (focused != LastFrameFocused)
+        io.AddFocusEvent(focused);
+    LastFrameFocused = focused;
 
-	// handle the modifyer key events so that shortcuts work
-	bool ctrlDown = rlImGuiIsControlDown();
-	if (ctrlDown != LastControlPressed)
-		io.AddKeyEvent(ImGuiMod_Ctrl, ctrlDown);
-	LastControlPressed = ctrlDown;
+    // handle the modifyer key events so that shortcuts work
+    bool ctrlDown = rlImGuiIsControlDown();
+    if (ctrlDown != LastControlPressed)
+        io.AddKeyEvent(ImGuiMod_Ctrl, ctrlDown);
+    LastControlPressed = ctrlDown;
 
-	bool shiftDown = rlImGuiIsShiftDown();
-	if (shiftDown != LastShiftPressed)
-		io.AddKeyEvent(ImGuiMod_Shift, shiftDown);
-	LastShiftPressed = shiftDown;
+    bool shiftDown = rlImGuiIsShiftDown();
+    if (shiftDown != LastShiftPressed)
+        io.AddKeyEvent(ImGuiMod_Shift, shiftDown);
+    LastShiftPressed = shiftDown;
 
-	bool altDown = rlImGuiIsAltDown();
-	if (altDown != LastAltPressed)
-		io.AddKeyEvent(ImGuiMod_Alt, altDown);
-	LastAltPressed = altDown;
+    bool altDown = rlImGuiIsAltDown();
+    if (altDown != LastAltPressed)
+        io.AddKeyEvent(ImGuiMod_Alt, altDown);
+    LastAltPressed = altDown;
 
-	bool superDown = rlImGuiIsSuperDown();
-	if (superDown != LastSuperPressed)
-		io.AddKeyEvent(ImGuiMod_Super, superDown);
-	LastSuperPressed = superDown;
+    bool superDown = rlImGuiIsSuperDown();
+    if (superDown != LastSuperPressed)
+        io.AddKeyEvent(ImGuiMod_Super, superDown);
+    LastSuperPressed = superDown;
 
-	// get the pressed keys, just walk the keys so we don
-	for (int keyId = KEY_NULL; keyId < KeyboardKey::KEY_KP_EQUAL; keyId++)
-	{
+    // get the pressed keys, just walk the keys so we don
+    for (int keyId = KEY_NULL; keyId < KeyboardKey::KEY_KP_EQUAL; keyId++)
+    {
         if (!IsKeyPressed(keyId))
             continue;
-		auto keyItr = RaylibKeyMap.find(KeyboardKey(keyId));
-		if (keyItr != RaylibKeyMap.end())
-			io.AddKeyEvent(keyItr->second, true);
-	}
+        auto keyItr = RaylibKeyMap.find(KeyboardKey(keyId));
+        if (keyItr != RaylibKeyMap.end())
+            io.AddKeyEvent(keyItr->second, true);
+    }
 
-	// look for any keys that were down last frame and see if they were down and are released
-	for (const auto keyItr : RaylibKeyMap)
-	{
-		if (IsKeyReleased(keyItr.first))
-			io.AddKeyEvent(keyItr.second, false);
-	}
+    // look for any keys that were down last frame and see if they were down and are released
+    for (const auto keyItr : RaylibKeyMap)
+    {
+        if (IsKeyReleased(keyItr.first))
+            io.AddKeyEvent(keyItr.second, false);
+    }
 
     if (io.WantCaptureKeyboard)
     {
