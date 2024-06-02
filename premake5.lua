@@ -90,7 +90,7 @@ workspace "rlImGui"
 	
 
 	cdialect "C99"
-	cppdialect "C++11"
+	cppdialect "C++17"
 	check_raylib()
 	check_imgui()
 
@@ -101,7 +101,8 @@ project "rlImGui"
 	location "build"
 	targetdir "bin/%{cfg.buildcfg}"
 	language "C++"
-	
+	cdialect "C99"
+	cppdialect "C++17"
 	include_raylib()
 	includedirs { "rlImGui", "imgui", "imgui-master"}
 	vpaths 
@@ -118,6 +119,8 @@ group "Examples"
 project "simple"
 	kind "ConsoleApp"
 	language "C++"
+	cdialect "C99"
+	cppdialect "C++17"
 	location "build"
 	targetdir "bin/%{cfg.buildcfg}"
 	
@@ -138,6 +141,8 @@ project "simple"
 project "editor"
 	kind "ConsoleApp"
 	language "C++"
+	cdialect "C99"
+	cppdialect "C++17"
 	location "build"
 	targetdir "bin/%{cfg.buildcfg}"
 
@@ -159,6 +164,8 @@ project "editor"
 project "imgui_style_example"
 	kind "ConsoleApp"
 	language "C++"
+	cdialect "C99"
+	cppdialect "C++17"
 	location "build"
 	targetdir "bin/%{cfg.buildcfg}"
 	
@@ -178,6 +185,8 @@ project "imgui_style_example"
 project "docking_example"
 	kind "ConsoleApp"
 	language "C++"
+	cdialect "C99"
+	cppdialect "C++17"
 	location "build"
 	targetdir "bin/%{cfg.buildcfg}"
 	
@@ -192,5 +201,26 @@ project "docking_example"
 	includedirs {"./", "imgui", "imgui-master" }
 		
     filter "action:vs*"
-		debugdir "$(SolutionDir)"	
+		debugdir "$(SolutionDir)"
+
+project "asset_browser"
+	kind "ConsoleApp"
+	language "C++"
+	cdialect "C99"
+	cppdialect "C++17"
+	location "build"
+	targetdir "bin/%{cfg.buildcfg}"
 	
+	vpaths 
+	{
+		["Header Files"] = { "examples/asset_browser/**.h"},
+		["Source Files"] = {"examples/asset_browser/**.cpp", "examples/asset_browser/**.c"},
+	}
+	files {"examples/asset_browser/**.cpp", "examples/asset_browser/**.h"}
+	link_raylib()
+	links {"rlImGui"}
+	includedirs {"./", "examples/asset_browser/", "imgui", "imgui-master" }
+		
+    filter "action:vs*"
+		debugdir "$(SolutionDir)"
+		

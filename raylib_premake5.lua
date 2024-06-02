@@ -107,6 +107,8 @@ project "raylib"
 
     location "build"
     language "C"
+	cdialect "C99"
+	cppdialect "C++17"
     targetdir "bin/%{cfg.buildcfg}"
 
     filter "action:vs*"
