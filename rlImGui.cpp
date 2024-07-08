@@ -492,98 +492,135 @@ void rlImGuiShutdown(void)
     GlobalContext = nullptr;
 }
 
-void rlImGuiImage(const Texture* image)
+static struct ImVec4 colorVec4(Color tintColor)
 {
-    if (!image)
-        return;
-    
-    if (GlobalContext)
-        ImGui::SetCurrentContext(GlobalContext);
-    
-    ImGui::Image((ImTextureID)image, ImVec2(float(image->width), float(image->height)));
+    return (ImVec4) {
+        (float)tintColor.r / 255.0f,
+        (float)tintColor.g / 255.0f,
+        (float)tintColor.b / 255.0f,
+        (float)tintColor.a / 255.0f,
+    };
 }
 
-bool rlImGuiImageButton(const char* name, const Texture* image)
+static void getTexCoords(const Texture* image, Rectangle sourceRect, struct ImVec2* uv0, struct ImVec2* uv1)
 {
-    if (!image)
-        return false;
-    
-    if (GlobalContext)
-        ImGui::SetCurrentContext(GlobalContext);
-    
-    return ImGui::ImageButton(name, (ImTextureID)image, ImVec2(float(image->width), float(image->height)));
-}
-
-bool rlImGuiImageButtonSize(const char* name, const Texture* image, ImVec2 size)
-{
-    if (!image)
-        return false;
-    
-    if (GlobalContext)
-        ImGui::SetCurrentContext(GlobalContext);
-   
-    return ImGui::ImageButton(name, (ImTextureID)image, size);
-}
-
-void rlImGuiImageSize(const Texture* image, int width, int height)
-{
-    if (!image)
-        return;
-    
-    if (GlobalContext)
-        ImGui::SetCurrentContext(GlobalContext);
-    
-    ImGui::Image((ImTextureID)image, ImVec2(float(width), float(height)));
-}
-
-void rlImGuiImageSizeV(const Texture* image, Vector2 size)
-{
-    if (!image)
-        return;
-    
-    if (GlobalContext)
-        ImGui::SetCurrentContext(GlobalContext);
-    
-    ImGui::Image((ImTextureID)image, ImVec2(size.x, size.y));
-}
-
-void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Rectangle sourceRect)
-{
-    if (!image)
-        return;
-    
-    if (GlobalContext)
-        ImGui::SetCurrentContext(GlobalContext);
-    
-    ImVec2 uv0;
-    ImVec2 uv1;
-
     if (sourceRect.width < 0)
     {
-        uv0.x = -((float)sourceRect.x / image->width);
-        uv1.x = (uv0.x - (float)(fabs(sourceRect.width) / image->width));
+        uv0->x = -((float)sourceRect.x / image->width);
+        uv1->x = (uv0->x - (float)(fabs(sourceRect.width) / image->width));
     }
     else
     {
-        uv0.x = (float)sourceRect.x / image->width;
-        uv1.x = uv0.x + (float)(sourceRect.width / image->width);
+        uv0->x = (float)sourceRect.x / image->width;
+        uv1->x = uv0->x + (float)(sourceRect.width / image->width);
     }
 
     if (sourceRect.height < 0)
     {
-        uv0.y = -((float)sourceRect.y / image->height);
-        uv1.y = (uv0.y - (float)(fabs(sourceRect.height) / image->height));
+        uv0->y = -((float)sourceRect.y / image->height);
+        uv1->y = (uv0->y - (float)(fabs(sourceRect.height) / image->height));
     }
     else
     {
-        uv0.y = (float)sourceRect.y / image->height;
-        uv1.y = uv0.y + (float)(sourceRect.height / image->height);
+        uv0->y = (float)sourceRect.y / image->height;
+        uv1->y = uv0->y + (float)(sourceRect.height / image->height);
     }
-
-    ImGui::Image((ImTextureID)image, ImVec2(float(destWidth), float(destHeight)), uv0, uv1);
 }
 
-void rlImGuiImageRenderTexture(const RenderTexture* image)
+void rlImGuiImagePro(const Texture* image, struct ImVec2 size, Rectangle sourceRect, Color tintColor)
+{
+    if (!image)
+        return;
+    
+    if (GlobalContext)
+        ImGui::SetCurrentContext(GlobalContext);
+
+    struct ImVec2 uv0, uv1;
+    getTexCoords(image, sourceRect, &uv0, &uv1);
+    
+    ImGui::Image((ImTextureID)image, size, uv0, uv1, colorVec4(tintColor));
+}
+
+bool rlImGuiImageButtonPro(const char* name, const Texture* image, struct ImVec2 size, Rectangle sourceRect, Color tintColor)
+{
+    if (!image)
+        return false;
+    
+    if (GlobalContext)
+        ImGui::SetCurrentContext(GlobalContext);
+
+    struct ImVec2 uv0, uv1;
+    getTexCoords(image, sourceRect, &uv0, &uv1);
+   
+    return ImGui::ImageButton(name, (ImTextureID)image, size, uv0, uv1, colorVec4(tintColor));
+}
+
+void rlImGuiImageTint(const Texture* image, Color tintColor)
+{
+    Rectangle rec = (Rectangle) {0.0f, 0.0f, (float)image->width, (float)image->height};
+    return rlImGuiImagePro(image, ImVec2(float(image->width), float(image->height)), rec, tintColor);
+}
+
+void rlImGuiImage(const Texture* image)
+{
+    return rlImGuiImageTint(image, WHITE);
+}
+
+bool rlImGuiImageButtonTint(const char* name, const Texture* image, Color tintColor)
+{
+    Rectangle rec = (Rectangle) {0.0f, 0.0f, (float)image->width, (float)image->height };
+    return rlImGuiImageButtonPro(name, image, ImVec2(float(image->width), float(image->height)), rec, tintColor);
+}
+
+bool rlImGuiImageButton(const char* name, const Texture* image)
+{
+    return rlImGuiImageButtonTint(name, image, WHITE);
+}
+
+bool rlImGuiImageButtonSizeTint(const char* name, const Texture* image, struct ImVec2 size, Color tintColor)
+{
+    Rectangle rec = (Rectangle) {0.0f, 0.0f, (float)image->width, (float)image->height };
+    return rlImGuiImageButtonPro(name, image, size, rec, tintColor);
+}
+
+bool rlImGuiImageButtonSize(const char* name, const Texture* image, struct ImVec2 size)
+{
+    return rlImGuiImageButtonSizeTint(name, image, size, WHITE);
+}
+
+bool rlImGuiImageButtonRect(const char* name, const Texture* image, int destWidth, int destHeight, Rectangle sourceRect)
+{
+    return rlImGuiImageButtonPro(name, image, ImVec2(destWidth, destHeight), sourceRect, WHITE);
+}
+
+void rlImGuiImageSizeTintV(const Texture* image, struct ImVec2 size, Color tintColor)
+{
+    Rectangle rec = (Rectangle) {0.0f, 0.0f, (float)image->width, (float)image->height };
+    return rlImGuiImagePro(image, size, rec, tintColor);
+}
+
+void rlImGuiImageSizeTint(const Texture* image, int width, int height, Color tintColor)
+{
+    Rectangle rec = (Rectangle) {0.0f, 0.0f, (float)image->width, (float)image->height };
+    return rlImGuiImagePro(image, ImVec2((float)width, (float)height), rec, tintColor);
+}
+
+void rlImGuiImageSize(const Texture* image, int width, int height)
+{
+    return rlImGuiImageSizeTint(image, width, height, WHITE);
+}
+
+void rlImGuiImageSizeV(const Texture* image, struct ImVec2 size)
+{
+    return rlImGuiImageSizeTintV(image, size, WHITE);
+}
+
+void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Rectangle sourceRect)
+{
+    return rlImGuiImagePro(image, ImVec2((float)destWidth, (float)destHeight), sourceRect, WHITE);
+}
+
+void rlImGuiImageRenderTextureTint(const RenderTexture* image, Color tintColor)
 {
     if (!image)
         return;
@@ -591,10 +628,15 @@ void rlImGuiImageRenderTexture(const RenderTexture* image)
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
     
-    rlImGuiImageRect(&image->texture, image->texture.width, image->texture.height, Rectangle{ 0,0, float(image->texture.width), -float(image->texture.height) });
+    rlImGuiImagePro(&image->texture, ImVec2((float)image->texture.width, (float)image->texture.height), Rectangle{ 0,0, float(image->texture.width), -float(image->texture.height) }, tintColor);
 }
 
-void rlImGuiImageRenderTextureFit(const RenderTexture* image, bool center)
+void rlImGuiImageRenderTexture(const RenderTexture* image)
+{
+    return rlImGuiImageRenderTextureTint(image, WHITE);
+}
+
+void rlImGuiImageRenderTextureFitTint(const RenderTexture* image, bool center, Color tintColor)
 {
     if (!image)
         return;
@@ -622,7 +664,12 @@ void rlImGuiImageRenderTextureFit(const RenderTexture* image, bool center)
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (area.y / 2 - sizeY / 2));
     }
 
-    rlImGuiImageRect(&image->texture, sizeX, sizeY, Rectangle{ 0,0, float(image->texture.width), -float(image->texture.height) });
+    rlImGuiImagePro(&image->texture, ImVec2((float)sizeX, (float)sizeY), Rectangle{ 0,0, float(image->texture.width), -float(image->texture.height) }, tintColor);
+}
+
+void rlImGuiImageRenderTextureFit(const RenderTexture* image, bool center)
+{
+    return rlImGuiImageRenderTextureFitTint(image, center, WHITE);
 }
 
 // raw ImGui backend API

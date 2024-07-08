@@ -95,6 +95,14 @@ public:
 				{
 					CurrentToolMode = ToolMode::Move;
 				}
+				ImGui::SameLine();
+
+				// temporarily reset window padding so that the
+				// color picker window doesn't look weird
+				ImVec2 windowPadding = ImGui::GetStyle().WindowPadding;
+				ImGui::PopStyleVar();
+				ImGui::ColorEdit3("Tint Color", TintColor, ImGuiColorEditFlags_NoInputs);
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, windowPadding);
 
 				ImGui::SameLine();
 				switch (CurrentToolMode)
@@ -114,7 +122,8 @@ public:
 				ImGui::EndChild();
 			}
 
-			rlImGuiImageRect(&ViewTexture.texture, (int)size.x, (int)size.y, viewRect);	
+			Color tintCol = Color { (unsigned char)(TintColor[0] * 255), (unsigned char)(TintColor[1] * 255), (unsigned char)(TintColor[2] * 255), 255 };
+			rlImGuiImagePro(&ViewTexture.texture, size, viewRect, tintCol);	
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
@@ -182,6 +191,8 @@ public:
 	Vector2 LastMousePos = { 0 };
 	Vector2 LastTarget = { 0 };
 	bool Dragging = false;
+
+	float TintColor[3] = { 1.0f, 1.0f, 1.0f };
 
 	bool DirtyScene = false;
 
