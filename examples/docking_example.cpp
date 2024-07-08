@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 	int screenWidth = 1280;
 	int screenHeight = 800;
 
-	SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
+	SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
 	InitWindow(screenWidth, screenHeight, "raylib-Extras [ImGui] example - Docking");
 	SetTargetFPS(144);
 	rlImGuiSetup(true);
@@ -45,12 +45,15 @@ int main(int argc, char* argv[])
 		BeginDrawing();
 		ClearBackground(DARKGRAY);
 
+		// draw something to the raylib window below the GUI.
+		DrawCircle(GetScreenWidth() / 2, GetScreenHeight() / 2, GetScreenHeight() * 0.45f, DARKGREEN);
+
 		// start ImGui content
 		rlImGuiBegin();
 
 		// if you want windows to dock to the viewport, call this.
 #ifdef IMGUI_HAS_DOCK
-		ImGui::DockSpaceOverViewport();
+		ImGui::DockSpaceOverViewport(0,  NULL, ImGuiDockNodeFlags_PassthruCentralNode); // set ImGuiDockNodeFlags_PassthruCentralNode so that we can see the raylib contents behind the dockspace
 #endif
 
 		// show a simple menu bar
