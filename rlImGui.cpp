@@ -56,10 +56,10 @@ static bool LastShiftPressed = false;
 static bool LastAltPressed = false;
 static bool LastSuperPressed = false;
 
-bool rlImGuiIsControlDown() { return IsKeyDown(KEY_RIGHT_CONTROL) || IsKeyDown(KEY_LEFT_CONTROL); }
-bool rlImGuiIsShiftDown() { return IsKeyDown(KEY_RIGHT_SHIFT) || IsKeyDown(KEY_LEFT_SHIFT); }
-bool rlImGuiIsAltDown() { return IsKeyDown(KEY_RIGHT_ALT) || IsKeyDown(KEY_LEFT_ALT); }
-bool rlImGuiIsSuperDown() { return IsKeyDown(KEY_RIGHT_SUPER) || IsKeyDown(KEY_LEFT_SUPER); }
+RLIMGUIAPI bool rlImGuiIsControlDown() { return IsKeyDown(KEY_RIGHT_CONTROL) || IsKeyDown(KEY_LEFT_CONTROL); }
+RLIMGUIAPI bool rlImGuiIsShiftDown() { return IsKeyDown(KEY_RIGHT_SHIFT) || IsKeyDown(KEY_LEFT_SHIFT); }
+RLIMGUIAPI bool rlImGuiIsAltDown() { return IsKeyDown(KEY_RIGHT_ALT) || IsKeyDown(KEY_LEFT_ALT); }
+RLIMGUIAPI bool rlImGuiIsSuperDown() { return IsKeyDown(KEY_RIGHT_SUPER) || IsKeyDown(KEY_LEFT_SUPER); }
 
 void ReloadFonts(void)
 {
@@ -294,7 +294,7 @@ void SetupBackend(void)
     io.ClipboardUserData = nullptr;
 }
 
-void rlImGuiEndInitImGui(void)
+RLIMGUIAPI void rlImGuiEndInitImGui(void)
 {
     ImGui::SetCurrentContext(GlobalContext);
 
@@ -429,7 +429,7 @@ static void SetupGlobals(void)
     LastSuperPressed = false;
 }
 
-void rlImGuiBeginInitImGui(void)
+RLIMGUIAPI void rlImGuiBeginInitImGui(void)
 {
     SetupGlobals();
     if (GlobalContext == nullptr)
@@ -440,7 +440,7 @@ void rlImGuiBeginInitImGui(void)
     io.Fonts->AddFontDefault();
 }
 
-void rlImGuiSetup(bool dark)
+RLIMGUIAPI void rlImGuiSetup(bool dark)
 {
     rlImGuiBeginInitImGui();
 
@@ -452,20 +452,20 @@ void rlImGuiSetup(bool dark)
     rlImGuiEndInitImGui();
 }
 
-void rlImGuiReloadFonts(void)
+RLIMGUIAPI void rlImGuiReloadFonts(void)
 {
     ImGui::SetCurrentContext(GlobalContext);
 
     ReloadFonts();
 }
 
-void rlImGuiBegin(void)
+RLIMGUIAPI void rlImGuiBegin(void)
 {
     ImGui::SetCurrentContext(GlobalContext);
     rlImGuiBeginDelta(GetFrameTime());
 }
 
-void rlImGuiBeginDelta(float deltaTime)
+RLIMGUIAPI void rlImGuiBeginDelta(float deltaTime)
 {
     ImGui::SetCurrentContext(GlobalContext);
     ImGuiNewFrame(deltaTime);
@@ -473,14 +473,14 @@ void rlImGuiBeginDelta(float deltaTime)
     ImGui::NewFrame();
 }
 
-void rlImGuiEnd(void)
+RLIMGUIAPI void rlImGuiEnd(void)
 {
     ImGui::SetCurrentContext(GlobalContext);
     ImGui::Render();
     ImGui_ImplRaylib_RenderDrawData(ImGui::GetDrawData());
 }
 
-void rlImGuiShutdown(void)
+RLIMGUIAPI void rlImGuiShutdown(void)
 {
     if (GlobalContext == nullptr)
         return;
@@ -492,7 +492,7 @@ void rlImGuiShutdown(void)
     GlobalContext = nullptr;
 }
 
-void rlImGuiImage(const Texture* image)
+RLIMGUIAPI void rlImGuiImage(const Texture* image)
 {
     if (!image)
         return;
@@ -503,7 +503,7 @@ void rlImGuiImage(const Texture* image)
     ImGui::Image((ImTextureID)image, ImVec2(float(image->width), float(image->height)));
 }
 
-bool rlImGuiImageButton(const char* name, const Texture* image)
+RLIMGUIAPI bool rlImGuiImageButton(const char* name, const Texture* image)
 {
     if (!image)
         return false;
@@ -514,7 +514,7 @@ bool rlImGuiImageButton(const char* name, const Texture* image)
     return ImGui::ImageButton(name, (ImTextureID)image, ImVec2(float(image->width), float(image->height)));
 }
 
-bool rlImGuiImageButtonSize(const char* name, const Texture* image, ImVec2 size)
+RLIMGUIAPI bool rlImGuiImageButtonSize(const char* name, const Texture* image, ImVec2 size)
 {
     if (!image)
         return false;
@@ -525,7 +525,7 @@ bool rlImGuiImageButtonSize(const char* name, const Texture* image, ImVec2 size)
     return ImGui::ImageButton(name, (ImTextureID)image, size);
 }
 
-void rlImGuiImageSize(const Texture* image, int width, int height)
+RLIMGUIAPI void rlImGuiImageSize(const Texture* image, int width, int height)
 {
     if (!image)
         return;
@@ -536,7 +536,7 @@ void rlImGuiImageSize(const Texture* image, int width, int height)
     ImGui::Image((ImTextureID)image, ImVec2(float(width), float(height)));
 }
 
-void rlImGuiImageSizeV(const Texture* image, Vector2 size)
+RLIMGUIAPI void rlImGuiImageSizeV(const Texture* image, Vector2 size)
 {
     if (!image)
         return;
@@ -547,7 +547,7 @@ void rlImGuiImageSizeV(const Texture* image, Vector2 size)
     ImGui::Image((ImTextureID)image, ImVec2(size.x, size.y));
 }
 
-void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Rectangle sourceRect)
+RLIMGUIAPI void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Rectangle sourceRect)
 {
     if (!image)
         return;
@@ -583,7 +583,7 @@ void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Recta
     ImGui::Image((ImTextureID)image, ImVec2(float(destWidth), float(destHeight)), uv0, uv1);
 }
 
-void rlImGuiImageRenderTexture(const RenderTexture* image)
+RLIMGUIAPI void rlImGuiImageRenderTexture(const RenderTexture* image)
 {
     if (!image)
         return;
@@ -594,7 +594,7 @@ void rlImGuiImageRenderTexture(const RenderTexture* image)
     rlImGuiImageRect(&image->texture, image->texture.width, image->texture.height, Rectangle{ 0,0, float(image->texture.width), -float(image->texture.height) });
 }
 
-void rlImGuiImageRenderTextureFit(const RenderTexture* image, bool center)
+RLIMGUIAPI void rlImGuiImageRenderTextureFit(const RenderTexture* image, bool center)
 {
     if (!image)
         return;
