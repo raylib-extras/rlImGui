@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
 		rlImGuiBegin();
 
 		ImGui::SetNextWindowPos(ImVec2(0, 0));
-		ImGui::SetNextWindowSize(ImVec2(GetScreenWidth(), GetScreenHeight()));
+		ImGui::SetNextWindowSize(ImVec2(float(GetScreenWidth()), float(GetScreenHeight())));
 		if (ImGui::Begin("Frame", 0, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings))
 		{
 			assetBrowser.Show();
