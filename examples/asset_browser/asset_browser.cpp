@@ -18,6 +18,19 @@
 #include "raylib.h"
 #include "extras/IconsFontAwesome6.h"
 
+#ifdef __APPLE__
+#include <ctype.h>
+#include <string.h>
+
+int stricmp(const char *s1, const char *s2) {
+    while (*s1 && (tolower((unsigned char)*s1) == tolower((unsigned char)*s2))) {
+        s1++;
+        s2++;
+    }
+    return tolower((unsigned char)*s1) - tolower((unsigned char)*s2);
+}
+#endif
+
 
 AssetBrowserPanel::AssetBrowserPanel()
 {
