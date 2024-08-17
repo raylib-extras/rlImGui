@@ -62,6 +62,8 @@ bool rlImGuiIsShiftDown() { return IsKeyDown(KEY_RIGHT_SHIFT) || IsKeyDown(KEY_L
 bool rlImGuiIsAltDown() { return IsKeyDown(KEY_RIGHT_ALT) || IsKeyDown(KEY_LEFT_ALT); }
 bool rlImGuiIsSuperDown() { return IsKeyDown(KEY_RIGHT_SUPER) || IsKeyDown(KEY_LEFT_SUPER); }
 
+std::map<size_t, Texture2D*> FontTextures;
+
 void ReloadFonts(void)
 {
     ImGuiIO& io = ImGui::GetIO();
@@ -73,17 +75,20 @@ void ReloadFonts(void)
     Image image = GenImageColor(width, height, BLANK);
     memcpy(image.data, pixels, width * height * 4);
 
-    Texture2D* fontTexture = (Texture2D*)io.Fonts->TexID;
-    if (fontTexture && fontTexture->id != 0)
+    size_t textureId = reinterpret_cast<size_t>(io.Fonts->TexID);
+    if (FontTextures.find(textureId) != FontTextures.end())
     {
-        UnloadTexture(*fontTexture);
-        MemFree(fontTexture);
+        UnloadTexture(*FontTextures[textureId]);
+        MemFree(FontTextures[textureId]);
+        FontTextures.erase(FontTextures.find(textureId));
     }
 
-    fontTexture = (Texture2D*)MemAlloc(sizeof(Texture2D));
+    Texture2D* fontTexture = (Texture2D*)MemAlloc(sizeof(Texture2D));
     *fontTexture = LoadTextureFromImage(image);
     UnloadImage(image);
-    io.Fonts->TexID = fontTexture;
+    textureId = size_t(fontTexture->id);
+    FontTextures.insert_or_assign(textureId, fontTexture);
+    io.Fonts->TexID = (ImTextureID)textureId;
 }
 
 static const char* GetClipTextCallback(void*) 
@@ -197,12 +202,11 @@ static void ImGuiRenderTriangles(unsigned int count, int indexStart, const ImVec
     if (count < 3)
         return;
 
-    Texture* texture = (Texture*)texturePtr;
 
-    unsigned int textureId = (texture == nullptr) ? 0 : texture->id;
+    size_t textureId = reinterpret_cast<size_t>(texturePtr);
 
     rlBegin(RL_TRIANGLES);
-    rlSetTexture(textureId);
+    rlSetTexture(uint32_t(textureId));
 
     for (unsigned int i = 0; i <= (count - 3); i += 3)
     {
@@ -501,7 +505,8 @@ void rlImGuiImage(const Texture* image)
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
     
-    ImGui::Image((ImTextureID)image, ImVec2(float(image->width), float(image->height)));
+    size_t id = image->id;
+    ImGui::Image((ImTextureID)id, ImVec2(float(image->width), float(image->height)));
 }
 
 bool rlImGuiImageButton(const char* name, const Texture* image)
@@ -511,8 +516,9 @@ bool rlImGuiImageButton(const char* name, const Texture* image)
     
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
-    
-    return ImGui::ImageButton(name, (ImTextureID)image, ImVec2(float(image->width), float(image->height)));
+
+    size_t id = image->id;
+    return ImGui::ImageButton(name, (ImTextureID)id, ImVec2(float(image->width), float(image->height)));
 }
 
 bool rlImGuiImageButtonSize(const char* name, const Texture* image, ImVec2 size)
@@ -523,7 +529,9 @@ bool rlImGuiImageButtonSize(const char* name, const Texture* image, ImVec2 size)
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
    
-    return ImGui::ImageButton(name, (ImTextureID)image, size);
+    size_t id = image->id;
+
+    return ImGui::ImageButton(name, (ImTextureID)id, size);
 }
 
 void rlImGuiImageSize(const Texture* image, int width, int height)
@@ -533,8 +541,10 @@ void rlImGuiImageSize(const Texture* image, int width, int height)
     
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
+
+    size_t id = image->id;
     
-    ImGui::Image((ImTextureID)image, ImVec2(float(width), float(height)));
+    ImGui::Image((ImTextureID)id, ImVec2(float(width), float(height)));
 }
 
 void rlImGuiImageSizeV(const Texture* image, Vector2 size)
@@ -545,7 +555,9 @@ void rlImGuiImageSizeV(const Texture* image, Vector2 size)
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
     
-    ImGui::Image((ImTextureID)image, ImVec2(size.x, size.y));
+    size_t id = image->id;
+
+    ImGui::Image((ImTextureID)id, ImVec2(size.x, size.y));
 }
 
 void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Rectangle sourceRect)
@@ -581,7 +593,9 @@ void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Recta
         uv1.y = uv0.y + (float)(sourceRect.height / image->height);
     }
 
-    ImGui::Image((ImTextureID)image, ImVec2(float(destWidth), float(destHeight)), uv0, uv1);
+    size_t id = image->id;
+
+    ImGui::Image((ImTextureID)id, ImVec2(float(destWidth), float(destHeight)), uv0, uv1);
 }
 
 void rlImGuiImageRenderTexture(const RenderTexture* image)
@@ -648,14 +662,15 @@ void Imgui_ImplRaylib_BuildFontAtlas(void)
 void ImGui_ImplRaylib_Shutdown()
 {
     ImGuiIO& io =ImGui::GetIO();
-    Texture2D* fontTexture = (Texture2D*)io.Fonts->TexID;
 
-    if (fontTexture)
+    size_t fontTextureId = reinterpret_cast<size_t>(io.Fonts->TexID);
+    if (FontTextures.find(fontTextureId) != FontTextures.end())
     {
-        UnloadTexture(*fontTexture);
-        MemFree(fontTexture);
-    }
+        UnloadTexture(*FontTextures[fontTextureId]);
+        MemFree(FontTextures[fontTextureId]);
 
+        FontTextures.erase(FontTextures.find(fontTextureId));
+    }
     io.Fonts->TexID = 0;
 }
 
