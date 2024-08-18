@@ -37,6 +37,7 @@
 #include <math.h>
 #include <map>
 #include <limits>
+#include <cstdint>
 
 #ifndef NO_FONT_AWESOME
 #include "extras/FA6FreeSolidFontData.h"
