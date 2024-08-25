@@ -67,7 +67,7 @@ public:
 		if (ImGui::Begin("Image Viewer", &Open, ImGuiWindowFlags_NoScrollbar))
 		{
 			// save off the screen space content rectangle
-			ContentRect = { ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x, ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y, ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y };
+			ContentRect = { ImGui::GetWindowPos().x + ImGui::GetCursorScreenPos().x, ImGui::GetWindowPos().y + ImGui::GetCursorScreenPos().y, ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y };
 
 			Focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
 

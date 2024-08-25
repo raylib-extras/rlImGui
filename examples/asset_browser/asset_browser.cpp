@@ -18,6 +18,8 @@
 #include "raylib.h"
 #include "extras/IconsFontAwesome6.h"
 
+#include <algorithm>
+
 
 AssetBrowserPanel::AssetBrowserPanel()
 {
@@ -246,23 +248,32 @@ ViewableItem* AssetBrowserPanel::AssetContainer::Next()
 
 const char* AssetBrowserPanel::GetFileIcon(const char* filename)
 {
-    const char* ext = GetFileExtension(filename);
+    const char* e = GetFileExtension(filename);
 
-    if (ext != nullptr)
+    if (e == nullptr)
+        return ICON_FA_FILE;
+
+    std::string ext = e;
+
+    std::transform(ext.begin(), ext.end(), ext.begin(),
+        [](unsigned char c) { return std::tolower(c); } // correct
+    );
+
+    if (!ext.empty())
     {
-        if (stricmp(ext, ".png") == 0)
+        if (ext==".png")
             return ICON_FA_FILE_IMAGE;
 
-        if (stricmp(ext, ".wav") == 0 || stricmp(ext, ".mp3") == 0 || stricmp(ext, ".oog") == 0)
+        if (ext==".wav" || ext==".mp3" || ext==".oog")
             return ICON_FA_FILE_AUDIO;
 
-        if (stricmp(ext, ".ttf") == 0 || stricmp(ext, ".otf") == 0 || stricmp(ext, ".fnt") == 0)
+        if (ext==".ttf" || ext==".otf" || ext==".fnt")
             return ICON_FA_FONT;
 
-        if (stricmp(ext, ".txt") == 0 || stricmp(ext, ".md") == 0)
+        if (ext==".txt" || ext==".md")
             return ICON_FA_FILE_LINES;
 
-        if (stricmp(ext, ".lua") == 0 || stricmp(ext, ".c") == 0 || stricmp(ext, ".h") == 0 || stricmp(ext, ".cpp") == 0)
+        if (ext==".lua" || ext==".c" || ext==".h" || ext==".cpp")
             return ICON_FA_FILE_CODE;
     }
     return ICON_FA_FILE;
