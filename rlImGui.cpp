@@ -289,7 +289,7 @@ void SetupBackend(void)
 
     io.MousePos = ImVec2(0, 0);
 
-    ImGuiPlatformIO platformIO = ImGui::GetPlatformIO();
+    ImGuiPlatformIO& platformIO = ImGui::GetPlatformIO();
     platformIO.Platform_SetClipboardTextFn = SetClipTextCallback;
     platformIO.Platform_GetClipboardTextFn = GetClipTextCallback;
 
