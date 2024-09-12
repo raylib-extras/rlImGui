@@ -37,7 +37,6 @@
 #include <math.h>
 #include <map>
 #include <limits>
-#include <cstdint>
 
 #ifndef NO_FONT_AWESOME
 #include "extras/FA6FreeSolidFontData.h"
@@ -87,7 +86,7 @@ void ReloadFonts(void)
     io.Fonts->TexID = fontTexture;
 }
 
-static const char* GetClipTextCallback(ImGuiContext*)
+static const char* GetClipTextCallback(ImGuiContext*) 
 {
     return GetClipboardText();
 }
@@ -290,8 +289,7 @@ void SetupBackend(void)
 
     io.MousePos = ImVec2(0, 0);
 
-    ImGuiPlatformIO& platformIO = ImGui::GetPlatformIO();
-
+    ImGuiPlatformIO platformIO = ImGui::GetPlatformIO();
     platformIO.Platform_SetClipboardTextFn = SetClipTextCallback;
     platformIO.Platform_GetClipboardTextFn = GetClipTextCallback;
 
