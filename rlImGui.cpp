@@ -643,7 +643,7 @@ bool ImGui_ImplRaylib_Init(void)
     return true;
 }
 
-void Imgui_ImplRaylib_BuildFontAtlas(void)
+void ImGui_ImplRaylib_BuildFontAtlas(void)
 {
     ReloadFonts();
 }
