@@ -48,7 +48,7 @@ int main(int, char**)
     IM_ASSERT(font != nullptr);
 
     // required to be called to cache the font texture with raylib
-    Imgui_ImplRaylib_BuildFontAtlas();
+    ImGui_ImplRaylib_BuildFontAtlas();
    
     // Our state
     bool show_demo_window = true;
