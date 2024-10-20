@@ -130,34 +130,6 @@ static void ImGuiNewFrame(float deltaTime)
 
     io.DeltaTime = deltaTime;
 
-    if (io.WantSetMousePos)
-    {
-        SetMousePosition((int)io.MousePos.x, (int)io.MousePos.y);
-    }
-    else
-    {
-        io.AddMousePosEvent((float)GetMouseX(), (float)GetMouseY());
-    }
-
-    auto setMouseEvent = [&io](int rayMouse, int imGuiMouse)
-        {
-            if (IsMouseButtonPressed(rayMouse))
-                io.AddMouseButtonEvent(imGuiMouse, true);
-            else if (IsMouseButtonReleased(rayMouse))
-                io.AddMouseButtonEvent(imGuiMouse, false);
-        };
-
-    setMouseEvent(MOUSE_BUTTON_LEFT, ImGuiMouseButton_Left);
-    setMouseEvent(MOUSE_BUTTON_RIGHT, ImGuiMouseButton_Right);
-    setMouseEvent(MOUSE_BUTTON_MIDDLE, ImGuiMouseButton_Middle);
-    setMouseEvent(MOUSE_BUTTON_FORWARD, ImGuiMouseButton_Middle+1);
-    setMouseEvent(MOUSE_BUTTON_BACK, ImGuiMouseButton_Middle+2);
-
-    {
-        Vector2 mouseWheel = GetMouseWheelMoveV();
-        io.AddMouseWheelEvent(mouseWheel.x, mouseWheel.y);
-    }
-
     if (ImGui::GetIO().BackendFlags & ImGuiBackendFlags_HasMouseCursors)
     {
         if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) == 0)
@@ -744,21 +716,13 @@ bool ImGui_ImplRaylib_ProcessEvents(void)
         io.AddKeyEvent(ImGuiMod_Super, superDown);
     LastSuperPressed = superDown;
 
-    // get the pressed keys, just walk the keys so we don
-    for (int keyId = KEY_NULL; keyId < KeyboardKey::KEY_KP_EQUAL; keyId++)
-    {
-        if (!IsKeyPressed(keyId))
-            continue;
-        auto keyItr = RaylibKeyMap.find(KeyboardKey(keyId));
-        if (keyItr != RaylibKeyMap.end())
-            io.AddKeyEvent(keyItr->second, true);
-    }
-
-    // look for any keys that were down last frame and see if they were down and are released
+    // walk the keymap and check for up and down events
     for (const auto keyItr : RaylibKeyMap)
     {
         if (IsKeyReleased(keyItr.first))
             io.AddKeyEvent(keyItr.second, false);
+        else if(IsKeyPressed(keyItr.first))
+            io.AddKeyEvent(keyItr.second, true);
     }
 
     if (io.WantCaptureKeyboard)
@@ -770,6 +734,30 @@ bool ImGui_ImplRaylib_ProcessEvents(void)
             io.AddInputCharacter(pressed);
             pressed = GetCharPressed();
         }
+    }
+
+    if (!io.WantSetMousePos)
+    {
+        io.AddMousePosEvent((float)GetMouseX(), (float)GetMouseY());
+    }
+
+    auto setMouseEvent = [&io](int rayMouse, int imGuiMouse)
+        {
+            if (IsMouseButtonPressed(rayMouse))
+                io.AddMouseButtonEvent(imGuiMouse, true);
+            else if (IsMouseButtonReleased(rayMouse))
+                io.AddMouseButtonEvent(imGuiMouse, false);
+        };
+
+    setMouseEvent(MOUSE_BUTTON_LEFT, ImGuiMouseButton_Left);
+    setMouseEvent(MOUSE_BUTTON_RIGHT, ImGuiMouseButton_Right);
+    setMouseEvent(MOUSE_BUTTON_MIDDLE, ImGuiMouseButton_Middle);
+    setMouseEvent(MOUSE_BUTTON_FORWARD, ImGuiMouseButton_Middle + 1);
+    setMouseEvent(MOUSE_BUTTON_BACK, ImGuiMouseButton_Middle + 2);
+
+    {
+        Vector2 mouseWheel = GetMouseWheelMoveV();
+        io.AddMouseWheelEvent(mouseWheel.x, mouseWheel.y);
     }
 
     if (io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad && IsGamepadAvailable(0))
