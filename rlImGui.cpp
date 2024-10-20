@@ -34,6 +34,8 @@
 #include "raylib.h"
 #include "rlgl.h"
 
+#include "imgui.h"
+
 #include <math.h>
 #include <map>
 #include <limits>
@@ -84,7 +86,7 @@ void ReloadFonts(void)
     fontTexture = (Texture2D*)MemAlloc(sizeof(Texture2D));
     *fontTexture = LoadTextureFromImage(image);
     UnloadImage(image);
-    io.Fonts->TexID = fontTexture;
+    io.Fonts->TexID = (ImTextureID)fontTexture;
 }
 
 static const char* GetClipTextCallback(ImGuiContext*)
@@ -615,7 +617,7 @@ bool ImGui_ImplRaylib_Init(void)
     return true;
 }
 
-void Imgui_ImplRaylib_BuildFontAtlas(void)
+void ImGui_ImplRaylib_BuildFontAtlas(void)
 {
     ReloadFonts();
 }
@@ -658,7 +660,7 @@ void ImGui_ImplRaylib_RenderDrawData(ImDrawData* draw_data)
                 continue;
             }
 
-            ImGuiRenderTriangles(cmd.ElemCount, cmd.IdxOffset, commandList->IdxBuffer, commandList->VtxBuffer, cmd.TextureId);
+            ImGuiRenderTriangles(cmd.ElemCount, cmd.IdxOffset, commandList->IdxBuffer, commandList->VtxBuffer, (Texture2D*)cmd.TextureId);
             rlDrawRenderBatchActive();
         }
     }
