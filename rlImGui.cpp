@@ -103,7 +103,6 @@ static void ImGuiNewFrame(float deltaTime)
 {
     ImGuiIO& io = ImGui::GetIO();
 
-
     Vector2 resolutionScale = GetWindowScaleDPI();
 
 #ifndef PLATFORM_DRM
@@ -129,6 +128,9 @@ static void ImGuiNewFrame(float deltaTime)
 #endif
 
     io.DisplayFramebufferScale = ImVec2(resolutionScale.x, resolutionScale.y);
+
+    if (deltaTime <= 0)
+        deltaTime = 0.001f;
 
     io.DeltaTime = deltaTime;
 
@@ -446,6 +448,7 @@ void rlImGuiBegin(void)
 void rlImGuiBeginDelta(float deltaTime)
 {
     ImGui::SetCurrentContext(GlobalContext);
+
     ImGuiNewFrame(deltaTime);
     ImGui_ImplRaylib_ProcessEvents();
     ImGui::NewFrame();
