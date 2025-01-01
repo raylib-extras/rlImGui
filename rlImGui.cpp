@@ -495,7 +495,7 @@ bool rlImGuiImageButton(const char* name, const Texture* image)
     return ImGui::ImageButton(name, (ImTextureID)image, ImVec2(float(image->width), float(image->height)));
 }
 
-bool rlImGuiImageButtonSize(const char* name, const Texture* image, ImVec2 size)
+bool rlImGuiImageButtonSize(const char* name, const Texture* image, Vector2 size)
 {
     if (!image)
         return false;
@@ -503,7 +503,7 @@ bool rlImGuiImageButtonSize(const char* name, const Texture* image, ImVec2 size)
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
    
-    return ImGui::ImageButton(name, (ImTextureID)image, size);
+    return ImGui::ImageButton(name, (ImTextureID)image, ImVec2(size.x, size.y));
 }
 
 void rlImGuiImageSize(const Texture* image, int width, int height)
