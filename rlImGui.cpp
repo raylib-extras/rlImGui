@@ -249,7 +249,14 @@ void SetupFontAwesome(void)
 
     ImGuiIO& io = ImGui::GetIO();
 
-    io.Fonts->AddFontFromMemoryCompressedTTF((void*)fa_solid_900_compressed_data, fa_solid_900_compressed_size, FONT_AWESOME_ICON_SIZE, &icons_config, icons_ranges);
+    float size = FONT_AWESOME_ICON_SIZE;
+    if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
+    {
+        size *= GetWindowScaleDPI().y;
+        icons_config.RasterizerMultiply = GetWindowScaleDPI().y;
+    }
+
+    io.Fonts->AddFontFromMemoryCompressedTTF((void*)fa_solid_900_compressed_data, fa_solid_900_compressed_size, size, &icons_config, icons_ranges);
 #endif
 
 }
@@ -417,7 +424,21 @@ void rlImGuiBeginInitImGui(void)
     SetupKeymap();
 
     ImGuiIO& io = ImGui::GetIO();
-    io.Fonts->AddFontDefault();
+
+    ImFontConfig defaultConfig;
+
+	static constexpr int DefaultFonSize = 13;
+
+    defaultConfig.SizePixels = DefaultFonSize;
+
+	if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
+	{
+        defaultConfig.SizePixels = ceilf(defaultConfig.SizePixels * GetWindowScaleDPI().y);
+        defaultConfig.RasterizerMultiply = GetWindowScaleDPI().y;
+	}
+
+    defaultConfig.PixelSnapH = true;
+    io.Fonts->AddFontDefault(&defaultConfig);
 }
 
 void rlImGuiSetup(bool dark)
