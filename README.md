@@ -64,7 +64,7 @@ void rlImGuiImageRenderTexture(const RenderTexture* image);
 void rlImGuiImageRenderTextureFit(const RenderTexture* image, bool center);
 
 bool rlImGuiImageButton(const Texture *image);
-bool rlImGuiImageButtonSize(const char* name, const Texture* image, struct ImVec2 size);
+bool rlImGuiImageButtonSize(const char* name, const Texture* image, Vector2 size);
 ```
 
 # C vs C++
