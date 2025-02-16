@@ -73,3 +73,10 @@ The rlImGui.h API only uses features that are common to C and C++, so rlImGui ca
 
 # Low level API
 If you would like more controll over the ImGui Backend, you can use the low level API that is found in imgui_impl_raylib.h. This is API follows the patterns of other ImGui backends and does not do automatic context management. An example of it's use can be found in imgui_style_example.cpp 
+
+# Note for High DPI displays
+If your system does a display scale, like 125% or %150, you will write code to handle that.
+If you set the FLAG_WINDOW_HIGHDPI flag in raylib, that will create a frame buffer that is lower than your native screen resolution, and scale that up to fit your display. This makes it easy to define all your code in a 'normal' resolution, but has the disadvantage of making all text look blurry.
+The better option is to not use FLAG_WINDOW_HIGHDPI and let raylib run in the native resolution. You should then scale all your input values by GetWindowDPIScale.
+rlImGui supports this by automaticaly scaling the default font by the display scale when it detects a display scale and the DPI flag is not set.
+The examples show how to scale hardcoded values by the display scale to compensate and make your GUI look good in any scale.

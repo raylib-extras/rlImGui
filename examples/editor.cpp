@@ -21,6 +21,17 @@ bool Quit = false;
 
 bool ImGuiDemoOpen = false;
 
+// DPI scaling functions
+float ScaleToDPIF(float value)
+{
+    return GetWindowScaleDPI().x * value;
+}
+
+int ScaleToDPII(int value)
+{
+    return int(GetWindowScaleDPI().x * value);
+}
+
 class DocumentWindow
 {
 public:
@@ -60,7 +71,7 @@ public:
 	void Show() override
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		ImGui::SetNextWindowSizeConstraints(ImVec2(400, 400), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
+		ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPII(400), ScaleToDPII(400)), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
 
 		Focused = false;
 
@@ -229,7 +240,7 @@ public:
 		Camera.position.y = 3;
 		Camera.position.z = -25;
 
-		Image img = GenImageChecked(256, 256, 32, 32, DARKGRAY, WHITE);
+		Image img = GenImageChecked(ScaleToDPII(256), ScaleToDPII(256), ScaleToDPII(32), ScaleToDPII(32), DARKGRAY, WHITE);
 		GridTexture = LoadTextureFromImage(img);
 		UnloadImage(img);
 		GenTextureMipmaps(&GridTexture);
@@ -246,7 +257,7 @@ public:
 	void Show() override
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		ImGui::SetNextWindowSizeConstraints(ImVec2(400, 400), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
+		ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPII(400), ScaleToDPII(400)), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
 
 		if (ImGui::Begin("3D View", &Open, ImGuiWindowFlags_NoScrollbar))
 		{
@@ -340,8 +351,10 @@ int main(int argc, char* argv[])
 	int screenWidth = 1900;
 	int screenHeight = 900;
 
+    // do not set the FLAG_WINDOW_HIGHDPI flag, that scales a low res framebuffer up to the native resolution.
+	// use the native resolution and scale your geometry.
 	SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
-	InitWindow(screenWidth, screenHeight, "raylib-Extras [ImGui] example - ImGui Demo");
+	InitWindow(screenWidth, screenHeight, "raylib-Extras [ImGui] example - Editor Example");
 	SetTargetFPS(144);
 	rlImGuiSetup(true);
 	ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly = true;

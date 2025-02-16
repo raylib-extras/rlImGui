@@ -11,11 +11,26 @@
 #include "imgui_impl_raylib.h"
 #include "raylib.h"
 
+// DPI scaling functions
+// Use these to scale any hardcoded values to the native display resolution
+float ScaleToDPIF(float value)
+{
+    return GetWindowScaleDPI().x * value;
+}
+
+int ScaleToDPII(int value)
+{
+    return int(GetWindowScaleDPI().x * value);
+}
+
 // Main code
 int main(int, char**)
 {
     // Setup raylib window
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
+    // do not set the FLAG_WINDOW_HIGHDPI flag, that scales a low res framebuffer up to the native resolution.
+    // use the native resolution and scale your geometry.
+
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, "Dear ImGui Raylib(OpenGL) example");
  
     // Setup Dear ImGui context
@@ -23,6 +38,13 @@ int main(int, char**)
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // tell ImGui the display scale
+    if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
+    {
+        io.DisplayFramebufferScale.x = GetWindowScaleDPI().x;
+        io.DisplayFramebufferScale.y = GetWindowScaleDPI().y;
+    }
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -39,12 +61,26 @@ int main(int, char**)
     // - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
     // - Read 'docs/FONTS.md' for more instructions and details.
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-    io.Fonts->AddFontDefault();
+
+    // to properly scale for high DPI displays, we need to cale the font size by the dpi sale
+    static constexpr int DefaultFonSize = 13;
+    ImFontConfig defaultConfig;
+    defaultConfig.SizePixels = DefaultFonSize;
+
+    if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
+    {
+        defaultConfig.SizePixels = defaultConfig.SizePixels * GetWindowScaleDPI().y;
+        defaultConfig.RasterizerMultiply = GetWindowScaleDPI().y;
+    }
+
+    defaultConfig.PixelSnapH = true;
+    io.Fonts->AddFontDefault(&defaultConfig);
+
     //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-    ImFont* font = io.Fonts->AddFontFromFileTTF("resources/driusstraight.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
+    ImFont* font = io.Fonts->AddFontFromFileTTF("resources/driusstraight.ttf", ScaleToDPIF(18.0f), nullptr, io.Fonts->GetGlyphRangesJapanese());
     IM_ASSERT(font != nullptr);
 
     // required to be called to cache the font texture with raylib
@@ -106,7 +142,6 @@ int main(int, char**)
                 show_another_window = false;
             ImGui::End();
         }
-
 
         // Rendering
         ImGui::Render();

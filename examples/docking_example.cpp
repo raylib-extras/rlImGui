@@ -16,6 +16,16 @@
 #include "imgui.h"
 #include "rlImGui.h"
 
+// DPI scaling functions
+float ScaleToDPIF(float value)
+{
+	return GetWindowScaleDPI().x * value;
+}
+
+int ScaleToDPII(int value)
+{
+    return int(GetWindowScaleDPI().x * value);
+}
 
 int main(int argc, char* argv[])
 {
@@ -24,7 +34,9 @@ int main(int argc, char* argv[])
 	int screenWidth = 1280;
 	int screenHeight = 800;
 
-	SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
+	// do not set the FLAG_WINDOW_HIGHDPI flag, that scales a low res framebuffer up to the native resolution.
+	// use the native resolution and scale your geometry.
+	SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
 	InitWindow(screenWidth, screenHeight, "raylib-Extras [ImGui] example - Docking");
 	SetTargetFPS(144);
 	rlImGuiSetup(true);

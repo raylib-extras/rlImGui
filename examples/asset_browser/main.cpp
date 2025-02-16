@@ -29,8 +29,8 @@ int main(int argc, char* argv[])
 {
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	int screenWidth = 1900;
-	int screenHeight = 900;
+	int screenWidth = 1280;
+	int screenHeight = 800;
 
 	SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
 	InitWindow(screenWidth, screenHeight, "raylib-Extras [ImGui] example - Asset browser");
