@@ -251,10 +251,9 @@ void SetupFontAwesome(void)
 
     float size = FONT_AWESOME_ICON_SIZE;
     if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
-    {
         size *= GetWindowScaleDPI().y;
-        icons_config.RasterizerMultiply = GetWindowScaleDPI().y;
-    }
+
+    icons_config.RasterizerMultiply = GetWindowScaleDPI().y;
 
     io.Fonts->AddFontFromMemoryCompressedTTF((void*)fa_solid_900_compressed_data, fa_solid_900_compressed_size, size, &icons_config, icons_ranges);
 #endif
@@ -432,10 +431,9 @@ void rlImGuiBeginInitImGui(void)
     defaultConfig.SizePixels = DefaultFonSize;
 
 	if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
-	{
         defaultConfig.SizePixels = ceilf(defaultConfig.SizePixels * GetWindowScaleDPI().y);
-        defaultConfig.RasterizerMultiply = GetWindowScaleDPI().y;
-	}
+
+    defaultConfig.RasterizerMultiply = GetWindowScaleDPI().y;
 
     defaultConfig.PixelSnapH = true;
     io.Fonts->AddFontDefault(&defaultConfig);
