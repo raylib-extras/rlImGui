@@ -71,7 +71,7 @@ public:
 	void Show() override
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPII(400), ScaleToDPII(400)), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
+		ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPIF(400.0f), ScaleToDPIF(400.0f)), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
 
 		Focused = false;
 
@@ -257,7 +257,7 @@ public:
 	void Show() override
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPII(400), ScaleToDPII(400)), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
+		ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPIF(400.0f), ScaleToDPIF(400.0f)), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
 
 		if (ImGui::Begin("3D View", &Open, ImGuiWindowFlags_NoScrollbar))
 		{
