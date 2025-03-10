@@ -39,7 +39,6 @@ int main(int argc, char* argv[])
     rlImGuiBeginInitImGui();
     ImGui::StyleColorsDark();
 
-
     static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
     ImFontConfig icons_config;
     icons_config.MergeMode = true;

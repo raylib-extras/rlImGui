@@ -65,8 +65,39 @@ bool rlImGuiIsShiftDown() { return IsKeyDown(KEY_RIGHT_SHIFT) || IsKeyDown(KEY_L
 bool rlImGuiIsAltDown() { return IsKeyDown(KEY_RIGHT_ALT) || IsKeyDown(KEY_LEFT_ALT); }
 bool rlImGuiIsSuperDown() { return IsKeyDown(KEY_RIGHT_SUPER) || IsKeyDown(KEY_LEFT_SUPER); }
 
+struct ImGui_ImplRaylib_Data
+{
+    Texture FontTexture;
+};
+
+ImGui_ImplRaylib_Data* ImGui_ImplRaylib_GetBackendData()
+{
+    return ImGui::GetCurrentContext() ? (ImGui_ImplRaylib_Data*)ImGui::GetPlatformIO().Renderer_RenderState : nullptr;
+}
+
+void ImGui_ImplRaylib_CreateBackendData()
+{
+	if (!ImGui::GetCurrentContext() || ImGui::GetPlatformIO().Renderer_RenderState)
+		return;
+
+	ImGui::GetPlatformIO().Renderer_RenderState = MemAlloc(sizeof(ImGui_ImplRaylib_Data));
+}
+
+void ImGui_ImplRaylib_FreeBackendData()
+{
+    if (!ImGui::GetCurrentContext())
+        return;
+
+    MemFree(ImGui::GetPlatformIO().Renderer_RenderState);
+}
+
 void ReloadFonts(void)
 {
+    auto* platData = ImGui_ImplRaylib_GetBackendData();
+    if (!platData)
+        return;
+
+    ImGuiPlatformIO& platIo = ImGui::GetPlatformIO();
     ImGuiIO& io = ImGui::GetIO();
     unsigned char* pixels = nullptr;
 
@@ -76,17 +107,13 @@ void ReloadFonts(void)
     Image image = GenImageColor(width, height, BLANK);
     memcpy(image.data, pixels, width * height * 4);
 
-    Texture2D* fontTexture = (Texture2D*)io.Fonts->TexID;
-    if (fontTexture && fontTexture->id != 0)
+    if (IsTextureValid(platData->FontTexture))
     {
-        UnloadTexture(*fontTexture);
-        MemFree(fontTexture);
+        UnloadTexture(platData->FontTexture);
     }
-
-    fontTexture = (Texture2D*)MemAlloc(sizeof(Texture2D));
-    *fontTexture = LoadTextureFromImage(image);
+    platData->FontTexture = LoadTextureFromImage(image);
     UnloadImage(image);
-    io.Fonts->TexID = (ImTextureID)fontTexture;
+    io.Fonts->TexID = (ImTextureID)(&platData->FontTexture);
 }
 
 static const char* GetClipTextCallback(ImGuiContext*)
@@ -102,6 +129,17 @@ static void SetClipTextCallback(ImGuiContext*, const char* text)
 static void ImGuiNewFrame(float deltaTime)
 {
     ImGuiIO& io = ImGui::GetIO();
+	auto* platData = ImGui_ImplRaylib_GetBackendData();
+    if (!platData)
+    {
+        ImGui_ImplRaylib_CreateBackendData();
+        platData = ImGui_ImplRaylib_GetBackendData();
+        if (!platData)
+            return;
+    }
+
+    if (!IsTextureValid(platData->FontTexture))
+        ReloadFonts();
 
     Vector2 resolutionScale = GetWindowScaleDPI();
 
@@ -281,6 +319,8 @@ void SetupBackend(void)
     platformIO.Platform_GetClipboardTextFn = GetClipTextCallback;
 
     platformIO.Platform_ClipboardUserData = nullptr;
+
+    ImGui_ImplRaylib_CreateBackendData();
 }
 
 void rlImGuiEndInitImGui(void)
@@ -292,8 +332,6 @@ void rlImGuiEndInitImGui(void)
     SetupMouseCursors();
 
     SetupBackend();
-
-    ReloadFonts();
 }
 
 static void SetupKeymap(void)
@@ -651,13 +689,15 @@ void ImGui_ImplRaylib_BuildFontAtlas(void)
 void ImGui_ImplRaylib_Shutdown()
 {
     ImGuiIO& io =ImGui::GetIO();
-    Texture2D* fontTexture = (Texture2D*)io.Fonts->TexID;
 
-    if (fontTexture)
+    auto* plat = ImGui_ImplRaylib_GetBackendData();
+
+    if (plat && IsTextureValid(plat->FontTexture))
     {
-        UnloadTexture(*fontTexture);
-        MemFree(fontTexture);
+        UnloadTexture(plat->FontTexture);
     }
+
+    ImGui_ImplRaylib_FreeBackendData();
 
     io.Fonts->TexID = 0;
 }
