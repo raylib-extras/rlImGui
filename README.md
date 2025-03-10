@@ -76,7 +76,10 @@ If you would like more controll over the ImGui Backend, you can use the low leve
 
 # Note for High DPI displays
 If your system does a display scale, like 125% or %150, you will write code to handle that.
-If you set the FLAG_WINDOW_HIGHDPI flag in raylib, that will create a frame buffer that is lower than your native screen resolution, and scale that up to fit your display. This makes it easy to define all your code in a 'normal' resolution, but has the disadvantage of making all text look blurry.
+If you set the FLAG_WINDOW_HIGHDPI flag in raylib, that will create a frame buffer that is automatically scaled to fit your display. This makes it easy to define all your code in a 'normal' resolution, but has the disadvantage of making it harder to define other bufers in the native resolution. The most common side effect of this is that fonts look blury, because they are rendered at the non scaled resolution.
+rlImGui on non-apple platforms will scale the default fonts by the display scale to compensate, but if you have your own fonts, you will need to do the same.
+Note that apple platforms have several driver bugs with high DPI (retena displays), and rlImGui tries to compensate for them, but your results may vary or be inconsistent with other platforms.
+
 The better option is to not use FLAG_WINDOW_HIGHDPI and let raylib run in the native resolution. You should then scale all your input values by GetWindowDPIScale.
-rlImGui supports this by automaticaly scaling the default font by the display scale when it detects a display scale and the DPI flag is not set.
-The examples show how to scale hardcoded values by the display scale to compensate and make your GUI look good in any scale.
+
+Some examples show how to scale hardcoded values by the display scale to compensate and make your GUI look good in any scale.

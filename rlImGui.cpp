@@ -113,7 +113,7 @@ void ReloadFonts(void)
     }
     platData->FontTexture = LoadTextureFromImage(image);
     UnloadImage(image);
-    io.Fonts->TexID = (ImTextureID)(&platData->FontTexture);
+    io.Fonts->TexID = (ImTextureID)(platData->FontTexture.id);
 }
 
 static const char* GetClipTextCallback(ImGuiContext*)
@@ -207,14 +207,12 @@ static void ImGuiTriangleVert(ImDrawVert& idx_vert)
     rlVertex2f(idx_vert.pos.x, idx_vert.pos.y);
 }
 
-static void ImGuiRenderTriangles(unsigned int count, int indexStart, const ImVector<ImDrawIdx>& indexBuffer, const ImVector<ImDrawVert>& vertBuffer, void* texturePtr)
+static void ImGuiRenderTriangles(unsigned int count, int indexStart, const ImVector<ImDrawIdx>& indexBuffer, const ImVector<ImDrawVert>& vertBuffer, ImTextureID texturePtr)
 {
     if (count < 3)
         return;
 
-    Texture* texture = (Texture*)texturePtr;
-
-    unsigned int textureId = (texture == nullptr) ? 0 : texture->id;
+    unsigned int textureId = unsigned int (texturePtr);
 
     rlBegin(RL_TRIANGLES);
     rlSetTexture(textureId);
@@ -542,7 +540,7 @@ void rlImGuiImage(const Texture* image)
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
     
-    ImGui::Image((ImTextureID)image, ImVec2(float(image->width), float(image->height)));
+    ImGui::Image((ImTextureID)image->id, ImVec2(float(image->width), float(image->height)));
 }
 
 bool rlImGuiImageButton(const char* name, const Texture* image)
@@ -553,7 +551,7 @@ bool rlImGuiImageButton(const char* name, const Texture* image)
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
     
-    return ImGui::ImageButton(name, (ImTextureID)image, ImVec2(float(image->width), float(image->height)));
+    return ImGui::ImageButton(name, (ImTextureID)image->id, ImVec2(float(image->width), float(image->height)));
 }
 
 bool rlImGuiImageButtonSize(const char* name, const Texture* image, Vector2 size)
@@ -564,7 +562,7 @@ bool rlImGuiImageButtonSize(const char* name, const Texture* image, Vector2 size
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
    
-    return ImGui::ImageButton(name, (ImTextureID)image, ImVec2(size.x, size.y));
+    return ImGui::ImageButton(name, (ImTextureID)image->id, ImVec2(size.x, size.y));
 }
 
 void rlImGuiImageSize(const Texture* image, int width, int height)
@@ -575,7 +573,7 @@ void rlImGuiImageSize(const Texture* image, int width, int height)
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
     
-    ImGui::Image((ImTextureID)image, ImVec2(float(width), float(height)));
+    ImGui::Image((ImTextureID)image->id, ImVec2(float(width), float(height)));
 }
 
 void rlImGuiImageSizeV(const Texture* image, Vector2 size)
@@ -586,7 +584,7 @@ void rlImGuiImageSizeV(const Texture* image, Vector2 size)
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
     
-    ImGui::Image((ImTextureID)image, ImVec2(size.x, size.y));
+    ImGui::Image((ImTextureID)image->id, ImVec2(size.x, size.y));
 }
 
 void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Rectangle sourceRect)
@@ -622,7 +620,7 @@ void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Recta
         uv1.y = uv0.y + (float)(sourceRect.height / image->height);
     }
 
-    ImGui::Image((ImTextureID)image, ImVec2(float(destWidth), float(destHeight)), uv0, uv1);
+    ImGui::Image((ImTextureID)image->id, ImVec2(float(destWidth), float(destHeight)), uv0, uv1);
 }
 
 void rlImGuiImageRenderTexture(const RenderTexture* image)
@@ -726,7 +724,7 @@ void ImGui_ImplRaylib_RenderDrawData(ImDrawData* draw_data)
                 continue;
             }
 
-            ImGuiRenderTriangles(cmd.ElemCount, cmd.IdxOffset, commandList->IdxBuffer, commandList->VtxBuffer, (Texture2D*)cmd.TextureId);
+            ImGuiRenderTriangles(cmd.ElemCount, cmd.IdxOffset, commandList->IdxBuffer, commandList->VtxBuffer, cmd.TextureId);
             rlDrawRenderBatchActive();
         }
     }
