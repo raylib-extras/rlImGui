@@ -212,7 +212,7 @@ static void ImGuiRenderTriangles(unsigned int count, int indexStart, const ImVec
     if (count < 3)
         return;
 
-    unsigned int textureId = unsigned int (texturePtr);
+    unsigned int textureId = static_cast<unsigned int>(texturePtr);
 
     rlBegin(RL_TRIANGLES);
     rlSetTexture(textureId);
