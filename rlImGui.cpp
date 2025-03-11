@@ -201,7 +201,7 @@ static void ImGuiNewFrame(float deltaTime)
 static void ImGuiTriangleVert(ImDrawVert& idx_vert)
 {
     Color c = GetColor(idx_vert.col);
-    rlColor4ub(c.r, c.g, c.b, c.a);
+    rlColor4ub(c.a, c.b, c.g, c.r);
     rlTexCoord2f(idx_vert.uv.x, idx_vert.uv.y);
     rlVertex2f(idx_vert.pos.x, idx_vert.pos.y);
 }
