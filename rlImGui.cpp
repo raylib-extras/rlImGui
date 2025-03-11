@@ -72,7 +72,7 @@ struct ImGui_ImplRaylib_Data
 
 ImGui_ImplRaylib_Data* ImGui_ImplRaylib_GetBackendData()
 {
-    return ImGui::GetCurrentContext() ? (ImGui_ImplRaylib_Data*)ImGui::GetPlatformIO().Renderer_RenderState : nullptr;
+    return ImGui::GetCurrentContext() ? static_cast<ImGui_ImplRaylib_Data*>(ImGui::GetPlatformIO().Renderer_RenderState) : nullptr;
 }
 
 void ImGui_ImplRaylib_CreateBackendData()
@@ -113,7 +113,7 @@ void ReloadFonts(void)
     }
     platData->FontTexture = LoadTextureFromImage(image);
     UnloadImage(image);
-    io.Fonts->TexID = (ImTextureID)(platData->FontTexture.id);
+    io.Fonts->TexID = static_cast<ImTextureID>(platData->FontTexture.id);
 }
 
 static const char* GetClipTextCallback(ImGuiContext*)
@@ -200,9 +200,8 @@ static void ImGuiNewFrame(float deltaTime)
 
 static void ImGuiTriangleVert(ImDrawVert& idx_vert)
 {
-    Color* c;
-    c = (Color*)&idx_vert.col;
-    rlColor4ub(c->r, c->g, c->b, c->a);
+    Color c = GetColor(idx_vert.col);
+    rlColor4ub(c.r, c.g, c.b, c.a);
     rlTexCoord2f(idx_vert.uv.x, idx_vert.uv.y);
     rlVertex2f(idx_vert.pos.x, idx_vert.pos.y);
 }
@@ -540,7 +539,7 @@ void rlImGuiImage(const Texture* image)
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
     
-    ImGui::Image((ImTextureID)image->id, ImVec2(float(image->width), float(image->height)));
+    ImGui::Image(ImTextureID(image->id), ImVec2(float(image->width), float(image->height)));
 }
 
 bool rlImGuiImageButton(const char* name, const Texture* image)
@@ -551,7 +550,7 @@ bool rlImGuiImageButton(const char* name, const Texture* image)
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
     
-    return ImGui::ImageButton(name, (ImTextureID)image->id, ImVec2(float(image->width), float(image->height)));
+    return ImGui::ImageButton(name, ImTextureID(image->id), ImVec2(float(image->width), float(image->height)));
 }
 
 bool rlImGuiImageButtonSize(const char* name, const Texture* image, Vector2 size)
@@ -562,7 +561,7 @@ bool rlImGuiImageButtonSize(const char* name, const Texture* image, Vector2 size
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
    
-    return ImGui::ImageButton(name, (ImTextureID)image->id, ImVec2(size.x, size.y));
+    return ImGui::ImageButton(name, ImTextureID(image->id), ImVec2(size.x, size.y));
 }
 
 void rlImGuiImageSize(const Texture* image, int width, int height)
@@ -573,7 +572,7 @@ void rlImGuiImageSize(const Texture* image, int width, int height)
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
     
-    ImGui::Image((ImTextureID)image->id, ImVec2(float(width), float(height)));
+    ImGui::Image(ImTextureID(image->id), ImVec2(float(width), float(height)));
 }
 
 void rlImGuiImageSizeV(const Texture* image, Vector2 size)
@@ -584,7 +583,7 @@ void rlImGuiImageSizeV(const Texture* image, Vector2 size)
     if (GlobalContext)
         ImGui::SetCurrentContext(GlobalContext);
     
-    ImGui::Image((ImTextureID)image->id, ImVec2(size.x, size.y));
+    ImGui::Image(ImTextureID(image->id), ImVec2(size.x, size.y));
 }
 
 void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Rectangle sourceRect)
@@ -600,24 +599,24 @@ void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Recta
 
     if (sourceRect.width < 0)
     {
-        uv0.x = -((float)sourceRect.x / image->width);
-        uv1.x = (uv0.x - (float)(fabs(sourceRect.width) / image->width));
+        uv0.x = -sourceRect.x / image->width;
+        uv1.x = (uv0.x - float(fabs(sourceRect.width) / image->width));
     }
     else
     {
-        uv0.x = (float)sourceRect.x / image->width;
-        uv1.x = uv0.x + (float)(sourceRect.width / image->width);
+        uv0.x = sourceRect.x / image->width;
+        uv1.x = uv0.x + float(sourceRect.width / image->width);
     }
 
     if (sourceRect.height < 0)
     {
-        uv0.y = -((float)sourceRect.y / image->height);
-        uv1.y = (uv0.y - (float)(fabs(sourceRect.height) / image->height));
+        uv0.y = -sourceRect.y / image->height;
+        uv1.y = (uv0.y - fabsf(sourceRect.height) / image->height);
     }
     else
     {
-        uv0.y = (float)sourceRect.y / image->height;
-        uv1.y = uv0.y + (float)(sourceRect.height / image->height);
+        uv0.y = sourceRect.y / image->height;
+        uv1.y = uv0.y + sourceRect.height / image->height;
     }
 
     ImGui::Image((ImTextureID)image->id, ImVec2(float(destWidth), float(destHeight)), uv0, uv1);
@@ -804,7 +803,7 @@ bool ImGui_ImplRaylib_ProcessEvents(void)
 
     if (!io.WantSetMousePos)
     {
-        io.AddMousePosEvent((float)GetMouseX(), (float)GetMouseY());
+        io.AddMousePosEvent(float(GetMouseX()), float(GetMouseY()));
     }
 
     auto setMouseEvent = [&io](int rayMouse, int imGuiMouse)

@@ -11,6 +11,8 @@
 #include "imgui_impl_raylib.h"
 #include "raylib.h"
 
+#include <cstdint>
+
 // DPI scaling functions
 // Use these to scale any hardcoded values to the native display resolution
 float ScaleToDPIF(float value)
@@ -119,7 +121,7 @@ int main(int, char**)
             ImGui::Checkbox("Another Window", &show_another_window);
 
             ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+            ImGui::ColorEdit3("clear color", &clear_color.x); // Edit 3 floats representing a color
 
             if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
                 counter++;
@@ -143,7 +145,7 @@ int main(int, char**)
         // Rendering
         ImGui::Render();
         BeginDrawing();
-        ClearBackground(Color{ (unsigned char)(clear_color.x * 255), (unsigned char)(clear_color.y * 255),(unsigned char)(clear_color.z * 255),(unsigned char)(clear_color.w * 255) });
+        ClearBackground(Color{ uint8_t(clear_color.x * 255), uint8_t(clear_color.y * 255), uint8_t(clear_color.z * 255), uint8_t(clear_color.w * 255) });
         ImGui_ImplRaylib_RenderDrawData(ImGui::GetDrawData());
         EndDrawing();
 

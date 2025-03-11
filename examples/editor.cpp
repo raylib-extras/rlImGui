@@ -71,7 +71,7 @@ public:
 	void Show() override
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPIF(400.0f), ScaleToDPIF(400.0f)), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
+		ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPIF(400.0f), ScaleToDPIF(400.0f)), ImVec2(float(GetScreenWidth()), float(GetScreenHeight())));
 
 		Focused = false;
 
@@ -125,7 +125,7 @@ public:
 				ImGui::EndChild();
 			}
 
-			rlImGuiImageRect(&ViewTexture.texture, (int)size.x, (int)size.y, viewRect);	
+			rlImGuiImageRect(&ViewTexture.texture, int(size.x), int(size.y), viewRect);	
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
@@ -283,7 +283,7 @@ public:
 		float period = 10;
 		float magnitude = 25;
 
-		Camera.position.x = (float)(sinf((float)GetTime() / period) * magnitude);
+		Camera.position.x = sinf(float(GetTime() / period)) * magnitude;
 
 		BeginTextureMode(ViewTexture);
 		ClearBackground(SKYBLUE);
