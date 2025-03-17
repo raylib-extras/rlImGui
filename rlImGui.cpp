@@ -801,28 +801,41 @@ bool ImGui_ImplRaylib_ProcessEvents(void)
         }
     }
 
-    if (!io.WantSetMousePos)
-    {
-        io.AddMousePosEvent(float(GetMouseX()), float(GetMouseY()));
-    }
+    bool processsMouse = focused;
 
-    auto setMouseEvent = [&io](int rayMouse, int imGuiMouse)
+#if defined(RLIMGUI_ALWAYS_TRACK_MOUSE)
+    processsMouse = true;
+#endif
+
+    if (processsMouse)
+    {
+        if (!io.WantSetMousePos)
         {
-            if (IsMouseButtonPressed(rayMouse))
-                io.AddMouseButtonEvent(imGuiMouse, true);
-            else if (IsMouseButtonReleased(rayMouse))
-                io.AddMouseButtonEvent(imGuiMouse, false);
-        };
+            io.AddMousePosEvent(float(GetMouseX()), float(GetMouseY()));
+        }
 
-    setMouseEvent(MOUSE_BUTTON_LEFT, ImGuiMouseButton_Left);
-    setMouseEvent(MOUSE_BUTTON_RIGHT, ImGuiMouseButton_Right);
-    setMouseEvent(MOUSE_BUTTON_MIDDLE, ImGuiMouseButton_Middle);
-    setMouseEvent(MOUSE_BUTTON_FORWARD, ImGuiMouseButton_Middle + 1);
-    setMouseEvent(MOUSE_BUTTON_BACK, ImGuiMouseButton_Middle + 2);
+        auto setMouseEvent = [&io](int rayMouse, int imGuiMouse)
+            {
+                if (IsMouseButtonPressed(rayMouse))
+                    io.AddMouseButtonEvent(imGuiMouse, true);
+                else if (IsMouseButtonReleased(rayMouse))
+                    io.AddMouseButtonEvent(imGuiMouse, false);
+            };
 
+        setMouseEvent(MOUSE_BUTTON_LEFT, ImGuiMouseButton_Left);
+        setMouseEvent(MOUSE_BUTTON_RIGHT, ImGuiMouseButton_Right);
+        setMouseEvent(MOUSE_BUTTON_MIDDLE, ImGuiMouseButton_Middle);
+        setMouseEvent(MOUSE_BUTTON_FORWARD, ImGuiMouseButton_Middle + 1);
+        setMouseEvent(MOUSE_BUTTON_BACK, ImGuiMouseButton_Middle + 2);
+
+        {
+            Vector2 mouseWheel = GetMouseWheelMoveV();
+            io.AddMouseWheelEvent(mouseWheel.x, mouseWheel.y);
+        }
+    }
+    else
     {
-        Vector2 mouseWheel = GetMouseWheelMoveV();
-        io.AddMouseWheelEvent(mouseWheel.x, mouseWheel.y);
+        io.AddMousePosEvent(std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
     }
 
     if (io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad && IsGamepadAvailable(0))
