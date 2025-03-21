@@ -198,10 +198,24 @@ static void ImGuiNewFrame(float deltaTime)
     }
 }
 
-static void ImGuiTriangleVert(ImDrawVert& idx_vert)
+static void ImGuiTriangleVert(const ImDrawVert& idx_vert)
 {
-    Color *c = reinterpret_cast<Color*>(&idx_vert.col);
-    rlColor4ub(c->r, c->g, c->b, c->a);
+#ifdef __cpp_designated_initializers
+    Color c {
+       .r = static_cast<unsigned char>(idx_vert.col>>0),
+       .g = static_cast<unsigned char>(idx_vert.col>>8),
+       .b = static_cast<unsigned char>(idx_vert.col>>16),
+       .a = static_cast<unsigned char>(idx_vert.col>>24),
+    };
+#else
+    Color c {
+       static_cast<unsigned char>(idx_vert.col>>0),
+       static_cast<unsigned char>(idx_vert.col>>8),
+       static_cast<unsigned char>(idx_vert.col>>16),
+       static_cast<unsigned char>(idx_vert.col>>24),
+    };
+#endif
+    rlColor4ub(c.r, c.g, c.b, c.a);
     rlTexCoord2f(idx_vert.uv.x, idx_vert.uv.y);
     rlVertex2f(idx_vert.pos.x, idx_vert.pos.y);
 }
