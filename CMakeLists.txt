@@ -99,7 +99,7 @@ target_link_libraries(rlImGui PRIVATE raylib)
 
 
 if (NO_FONT_AWESOME)
-    target_compile_definitions(rlImGui PUBLIC "DNO_FONT_AWESOME")
+    target_compile_definitions(rlImGui PUBLIC "NO_FONT_AWESOME")
     install(TARGETS rlImGui
             EXPORT rlImGuiTargets
             ARCHIVE DESTINATION lib
