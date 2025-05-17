@@ -5,9 +5,11 @@ A Raylib integration with DearImGui
 rlImgui provides a backend for [Dear ImGui](https://github.com/ocornut/imgui) using [Raylib](https://www.raylib.com/). 
 
 # Building
-rlImGui is setup to use premake to generate a static library and examples for Visual Studio 2019. Premake can also be used to generate makefiles for linux. rlImGui can be used as a static library, or by direclty including the files into your game project.
+the rlImGui repository itself is setup to use premake to generate a static library and examples for Visual Studio 2019. Premake can also be used to generate makefiles for linux. rlImGui can be used as a static library, or by direclty including the files into your game project.
+Preamke is not required to use rlImGui, it is simply just what is used for development.
 
-If you wish to use premake, you will need to download the Premake5 executable for your platform from. https://premake.github.io/download
+## Other Systems
+rlImGui has no dependencies other than raylib and imgui. If you want to use any other build system, you can simply just build rlImGui and ImGui into a library, or even add the files direclty to your game if it can use C++ code. There are no specific build requirements for rlImgui itself.
 
 # Setup
 
