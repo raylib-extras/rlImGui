@@ -29,8 +29,6 @@ int ScaleToDPII(int value)
     return int(GetWindowScaleDPI().x * value);
 }
 
-
-
 int main(int argc, char* argv[])
 {
 	// Initialization
@@ -73,7 +71,6 @@ int main(int argc, char* argv[])
 		EndDrawing();
 		//----------------------------------------------------------------------------------
 	}
-	rlImGuiShutdown();
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------   
