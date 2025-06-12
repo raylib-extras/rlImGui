@@ -696,7 +696,7 @@ void ImGui_ImplRaylib_Shutdown()
 
     ImGui_ImplRaylib_FreeBackendData();
 
-    io.Fonts->TexID = 0;
+    io.Fonts->TexID = ImTextureID{0};
 }
 
 void ImGui_ImplRaylib_NewFrame(void)
@@ -723,7 +723,7 @@ void ImGui_ImplRaylib_RenderDrawData(ImDrawData* draw_data)
                 continue;
             }
 
-            ImGuiRenderTriangles(cmd.ElemCount, cmd.IdxOffset, commandList->IdxBuffer, commandList->VtxBuffer, cmd.TextureId);
+            ImGuiRenderTriangles(cmd.ElemCount, cmd.IdxOffset, commandList->IdxBuffer, commandList->VtxBuffer, cmd.GetTexID());
             rlDrawRenderBatchActive();
         }
     }
