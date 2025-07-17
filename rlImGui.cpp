@@ -91,6 +91,16 @@ void ImGui_ImplRaylib_FreeBackendData()
     MemFree(ImGui::GetPlatformIO().Renderer_RenderState);
 }
 
+
+Vector2 GetDisplayScale()
+{
+#if defined(__EMSCRIPTEN__)
+    return Vector2Ones;
+#else
+    return GetWindowScaleDPI();
+#endif
+}
+
 void ReloadFonts(void)
 {
     auto* platData = ImGui_ImplRaylib_GetBackendData();
@@ -141,7 +151,7 @@ static void ImGuiNewFrame(float deltaTime)
     if (!IsTextureValid(platData->FontTexture))
         ReloadFonts();
 
-    Vector2 resolutionScale = GetWindowScaleDPI();
+    Vector2 resolutionScale = GetDisplayScale();
 
 #ifndef PLATFORM_DRM
     if (IsWindowFullscreen())
@@ -301,10 +311,10 @@ void SetupFontAwesome(void)
     float size = FONT_AWESOME_ICON_SIZE;
 #if !defined(__APPLE__)
     if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
-        size *= GetWindowScaleDPI().y;
+        size *= GetDisplayScale().y;
 
 
-	icons_config.RasterizerMultiply = GetWindowScaleDPI().y;
+	icons_config.RasterizerMultiply = GetDisplayScale().y;
 #endif
 
     io.Fonts->AddFontFromMemoryCompressedTTF((void*)fa_solid_900_compressed_data, fa_solid_900_compressed_size, size, &icons_config, icons_ranges);
@@ -483,9 +493,9 @@ void rlImGuiBeginInitImGui(void)
     defaultConfig.SizePixels = DefaultFonSize;
 #if !defined(__APPLE__)
 	if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
-        defaultConfig.SizePixels = ceilf(defaultConfig.SizePixels * GetWindowScaleDPI().y);
+        defaultConfig.SizePixels = ceilf(defaultConfig.SizePixels * GetDisplayScale().y);
 
-    defaultConfig.RasterizerMultiply = GetWindowScaleDPI().y;
+    defaultConfig.RasterizerMultiply = GetDisplayScale().y;
 #endif
 
     defaultConfig.PixelSnapH = true;
