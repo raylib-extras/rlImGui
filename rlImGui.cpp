@@ -679,7 +679,12 @@ void ImGui_ImplRaylib_Shutdown()
             {
                 UnloadTexture(*backendData);
             }
+            if (backendData)
+                MemFree(backendData);
+
+            texture->BackendUserData = nullptr;
             texture->Status = ImTextureStatus_Destroyed;
+			texture->SetTexID(ImTextureID_Invalid);
         }
     }
 
@@ -738,6 +743,9 @@ void ImGui_ImplRaylib_UpdateTexture(ImTextureData* tex)
                 break;
             UnloadTexture(*texture);
             tex->Status = ImTextureStatus_Destroyed;
+            MemFree(texture);
+            tex->BackendUserData = nullptr;
+            tex->SetTexID(ImTextureID_Invalid);
         }
         break;
     }
