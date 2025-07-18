@@ -67,7 +67,6 @@ bool rlImGuiIsSuperDown() { return IsKeyDown(KEY_RIGHT_SUPER) || IsKeyDown(KEY_L
 
 struct ImGui_ImplRaylib_Data
 {
-    Texture FontTexture;
 };
 
 ImGui_ImplRaylib_Data* ImGui_ImplRaylib_GetBackendData()
@@ -77,10 +76,10 @@ ImGui_ImplRaylib_Data* ImGui_ImplRaylib_GetBackendData()
 
 void ImGui_ImplRaylib_CreateBackendData()
 {
-	if (!ImGui::GetCurrentContext() || ImGui::GetPlatformIO().Renderer_RenderState)
-		return;
+    if (!ImGui::GetCurrentContext() || ImGui::GetPlatformIO().Renderer_RenderState)
+        return;
 
-	ImGui::GetPlatformIO().Renderer_RenderState = MemAlloc(sizeof(ImGui_ImplRaylib_Data));
+    ImGui::GetPlatformIO().Renderer_RenderState = MemAlloc(sizeof(ImGui_ImplRaylib_Data));
 }
 
 void ImGui_ImplRaylib_FreeBackendData()
@@ -101,31 +100,6 @@ Vector2 GetDisplayScale()
 #endif
 }
 
-void ReloadFonts(void)
-{
-    auto* platData = ImGui_ImplRaylib_GetBackendData();
-    if (!platData)
-        return;
-
-    ImGuiPlatformIO& platIo = ImGui::GetPlatformIO();
-    ImGuiIO& io = ImGui::GetIO();
-    unsigned char* pixels = nullptr;
-
-    int width;
-    int height;
-    io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height, nullptr);
-    Image image = GenImageColor(width, height, BLANK);
-    memcpy(image.data, pixels, width * height * 4);
-
-    if (IsTextureValid(platData->FontTexture))
-    {
-        UnloadTexture(platData->FontTexture);
-    }
-    platData->FontTexture = LoadTextureFromImage(image);
-    UnloadImage(image);
-    io.Fonts->TexID = static_cast<ImTextureID>(platData->FontTexture.id);
-}
-
 static const char* GetClipTextCallback(ImGuiContext*)
 {
     return GetClipboardText();
@@ -139,7 +113,7 @@ static void SetClipTextCallback(ImGuiContext*, const char* text)
 static void ImGuiNewFrame(float deltaTime)
 {
     ImGuiIO& io = ImGui::GetIO();
-	auto* platData = ImGui_ImplRaylib_GetBackendData();
+    auto* platData = ImGui_ImplRaylib_GetBackendData();
     if (!platData)
     {
         ImGui_ImplRaylib_CreateBackendData();
@@ -147,9 +121,6 @@ static void ImGuiNewFrame(float deltaTime)
         if (!platData)
             return;
     }
-
-    if (!IsTextureValid(platData->FontTexture))
-        ReloadFonts();
 
     Vector2 resolutionScale = GetDisplayScale();
 
@@ -313,8 +284,7 @@ void SetupFontAwesome(void)
     if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
         size *= GetDisplayScale().y;
 
-
-	icons_config.RasterizerMultiply = GetDisplayScale().y;
+    icons_config.RasterizerMultiply = GetDisplayScale().y;
 #endif
 
     io.Fonts->AddFontFromMemoryCompressedTTF((void*)fa_solid_900_compressed_data, fa_solid_900_compressed_size, size, &icons_config, icons_ranges);
@@ -326,7 +296,7 @@ void SetupBackend(void)
 {
     ImGuiIO& io = ImGui::GetIO();
     io.BackendPlatformName = "imgui_impl_raylib";
-    io.BackendFlags |= ImGuiBackendFlags_HasGamepad | ImGuiBackendFlags_HasSetMousePos;
+    io.BackendFlags |= ImGuiBackendFlags_HasGamepad | ImGuiBackendFlags_HasSetMousePos | ImGuiBackendFlags_RendererHasTextures;
 
 #ifndef PLATFORM_DRM
     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
@@ -488,11 +458,11 @@ void rlImGuiBeginInitImGui(void)
 
     ImFontConfig defaultConfig;
 
-	static constexpr int DefaultFonSize = 13;
+    static constexpr int DefaultFonSize = 13;
 
     defaultConfig.SizePixels = DefaultFonSize;
 #if !defined(__APPLE__)
-	if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
+    if (!IsWindowState(FLAG_WINDOW_HIGHDPI))
         defaultConfig.SizePixels = ceilf(defaultConfig.SizePixels * GetDisplayScale().y);
 
     defaultConfig.RasterizerMultiply = GetDisplayScale().y;
@@ -512,13 +482,6 @@ void rlImGuiSetup(bool dark)
         ImGui::StyleColorsLight();
 
     rlImGuiEndInitImGui();
-}
-
-void rlImGuiReloadFonts(void)
-{
-    ImGui::SetCurrentContext(GlobalContext);
-
-    ReloadFonts();
 }
 
 void rlImGuiBegin(void)
@@ -702,25 +665,25 @@ bool ImGui_ImplRaylib_Init(void)
     return true;
 }
 
-void ImGui_ImplRaylib_BuildFontAtlas(void)
-{
-    ReloadFonts();
-}
 
 void ImGui_ImplRaylib_Shutdown()
 {
     ImGuiIO& io =ImGui::GetIO();
 
-    auto* plat = ImGui_ImplRaylib_GetBackendData();
-
-    if (plat && IsTextureValid(plat->FontTexture))
+    for (auto& texture : ImGui::GetPlatformIO().Textures)
     {
-        UnloadTexture(plat->FontTexture);
+        if (texture->Status != ImTextureStatus_Destroyed)
+        {
+            Texture* backendData = (Texture*)texture->BackendUserData;
+            if (backendData && IsTextureValid(*backendData))
+            {
+                UnloadTexture(*backendData);
+            }
+            texture->Status = ImTextureStatus_Destroyed;
+        }
     }
 
     ImGui_ImplRaylib_FreeBackendData();
-
-    io.Fonts->TexID = ImTextureID{0};
 }
 
 void ImGui_ImplRaylib_NewFrame(void)
@@ -728,8 +691,69 @@ void ImGui_ImplRaylib_NewFrame(void)
     ImGuiNewFrame(GetFrameTime());
 }
 
+void ImGui_ImplRaylib_UpdateTexture(ImTextureData* tex)
+{
+    switch (tex->Status)
+    {
+        case ImTextureStatus_OK:
+        case ImTextureStatus_Destroyed:
+        default:
+            break;
+
+        case ImTextureStatus_WantCreate:
+        {
+            Image img = { 0 };
+            img.width = tex->Width;
+            img.height = tex->Height;
+
+            img.format = tex->Format == ImTextureFormat_Alpha8 ? PIXELFORMAT_UNCOMPRESSED_GRAYSCALE : PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
+            img.mipmaps = 1;
+            img.data = tex->GetPixels();
+
+            Texture* texture = (Texture*)MemAlloc(sizeof(Texture));
+            tex->BackendUserData = texture;;
+            *texture = LoadTextureFromImage(img);
+            tex->SetTexID(ImTextureID(texture->id));
+            tex->Status = ImTextureStatus_OK;
+        }
+            break;
+
+        case ImTextureStatus_WantUpdates:
+        {
+            Texture* texture = (Texture*)tex->BackendUserData;
+            if (!texture)
+                break;
+
+            UpdateTexture(*texture, tex->GetPixels());
+
+            tex->Status = ImTextureStatus_OK;
+        }
+            break;
+
+        case ImTextureStatus_WantDestroy:
+        {
+            Texture* texture = (Texture*)tex->BackendUserData;
+
+            if (!texture)
+                break;
+            UnloadTexture(*texture);
+            tex->Status = ImTextureStatus_Destroyed;
+        }
+        break;
+    }
+}
+
 void ImGui_ImplRaylib_RenderDrawData(ImDrawData* draw_data)
 {
+    if (draw_data->Textures != nullptr)
+    {
+        for (ImTextureData* tex : *draw_data->Textures)
+        {
+            if (tex->Status != ImTextureStatus_OK)
+                ImGui_ImplRaylib_UpdateTexture(tex);
+        }
+    }
+
     rlDrawRenderBatchActive();
     rlDisableBackfaceCulling();
 
