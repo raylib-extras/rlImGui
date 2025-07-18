@@ -609,6 +609,37 @@ void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Recta
     ImGui::Image((ImTextureID)image->id, ImVec2(float(destWidth), float(destHeight)), uv0, uv1);
 }
 
+void rlImGuiImageFit(const Texture* image, bool center)
+{
+    if (!image)
+        return;
+    
+    if (GlobalContext)
+        ImGui::SetCurrentContext(GlobalContext);
+
+    ImVec2 area = ImGui::GetContentRegionAvail();
+
+    float scale =  area.x / image->width;
+
+    float y = image->height * scale;
+    if (y > area.y)
+    {
+        scale = area.y / image->height;
+    }
+
+    int sizeX = int(image->width * scale);
+    int sizeY = int(image->height * scale);
+
+    if (center)
+    {
+        ImGui::SetCursorPosX(0);
+        ImGui::SetCursorPosX(area.x/2 - sizeX/2);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (area.y / 2 - sizeY / 2));
+    }
+
+    rlImGuiImageRect(image, sizeX, sizeY, Rectangle{ 0,0, float(image->width), float(image->height) });
+}
+
 void rlImGuiImageRenderTexture(const RenderTexture* image)
 {
     if (!image)
