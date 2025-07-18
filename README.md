@@ -65,6 +65,7 @@ void rlImGuiImage(const Texture *image);
 void rlImGuiImageSize(const Texture *image, int width, int height);
 void rlImGuiImageSizeV(const Texture* image, Vector2 size);
 void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Rectangle sourceRect);
+void rlImGuiImageFit(const Texture* image, bool center);
 void rlImGuiImageRenderTexture(const RenderTexture* image);
 void rlImGuiImageRenderTextureFit(const RenderTexture* image, bool center);
 

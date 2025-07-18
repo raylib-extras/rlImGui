@@ -160,6 +160,14 @@ RLIMGUIAPI void rlImGuiImageSizeV(const Texture* image, Vector2 size);
 RLIMGUIAPI void rlImGuiImageRect(const Texture* image, int destWidth, int destHeight, Rectangle sourceRect);
 
 /// <summary>
+/// Draws a texture as an image an ImGui Context
+/// Fits the texture to the available content area
+/// </summary>
+/// <param name="image">The texture to draw</param>
+/// <param name="center">When true the image will be centered in the content area</param>
+RLIMGUIAPI void rlImGuiImageFit(const Texture* image, bool center);
+
+/// <summary>
 /// Draws a render texture as an image an ImGui Context, automatically flipping the Y axis so it will show correctly on screen
 /// </summary>
 /// <param name="image">The render texture to draw</param>
