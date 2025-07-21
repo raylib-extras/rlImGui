@@ -94,7 +94,7 @@ void ImGui_ImplRaylib_FreeBackendData()
 Vector2 GetDisplayScale()
 {
 #if defined(__EMSCRIPTEN__)
-    return Vector2Ones;
+    return Vector2{ 1,1 };
 #else
     return GetWindowScaleDPI();
 #endif
@@ -684,7 +684,7 @@ void ImGui_ImplRaylib_Shutdown()
 
             texture->BackendUserData = nullptr;
             texture->Status = ImTextureStatus_Destroyed;
-			texture->SetTexID(ImTextureID_Invalid);
+            texture->SetTexID(ImTextureID_Invalid);
         }
     }
 
