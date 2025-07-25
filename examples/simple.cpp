@@ -59,7 +59,9 @@ int main(int argc, char* argv[])
 		open = true;
 		if (ImGui::Begin("Test Window", &open))
 		{
+#ifndef NO_FONT_AWESOME
 			ImGui::TextUnformatted(ICON_FA_JEDI);
+#endif
 
 			rlImGuiImage(&image);
 		}
