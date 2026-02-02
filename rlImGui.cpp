@@ -37,7 +37,6 @@
 #include "imgui.h"
 
 #include <math.h>
-#include <map>
 #include <limits>
 #include <cstdint>
 
@@ -50,7 +49,9 @@ static MouseCursor MouseCursorMap[ImGuiMouseCursor_COUNT];
 
 ImGuiContext* GlobalContext = nullptr;
 
-static std::map<KeyboardKey, ImGuiKey> RaylibKeyMap;
+static constexpr size_t MAX_RAYLIB_KEY = 349;
+static ImGuiKey RaylibKeyMap[MAX_RAYLIB_KEY];
+static bool KeyMapInitialized = false;
 
 static bool LastFrameFocused = false;
 
@@ -327,8 +328,12 @@ void rlImGuiEndInitImGui(void)
 
 static void SetupKeymap(void)
 {
-    if (!RaylibKeyMap.empty())
+    if (KeyMapInitialized)
         return;
+
+    KeyMapInitialized = true;
+
+    memset(RaylibKeyMap, 0, MAX_RAYLIB_KEY * sizeof(ImGuiKey));
 
     // build up a map of raylib keys to ImGuiKeys
     RaylibKeyMap[KEY_APOSTROPHE] = ImGuiKey_Apostrophe;
@@ -838,12 +843,17 @@ bool ImGui_ImplRaylib_ProcessEvents(void)
     LastSuperPressed = superDown;
 
     // walk the keymap and check for up and down events
-    for (const auto keyItr : RaylibKeyMap)
+	for (int keyItr = 0; keyItr < MAX_RAYLIB_KEY; keyItr++)
     {
-        if (IsKeyReleased(keyItr.first))
-            io.AddKeyEvent(keyItr.second, false);
-        else if(IsKeyPressed(keyItr.first))
-            io.AddKeyEvent(keyItr.second, true);
+        const auto key = RaylibKeyMap[keyItr];
+
+        if (key == 0)
+            continue;
+
+        if (IsKeyReleased(keyItr))
+            io.AddKeyEvent(key, false);
+        else if(IsKeyPressed(keyItr))
+            io.AddKeyEvent(key, true);
     }
 
     if (io.WantCaptureKeyboard)

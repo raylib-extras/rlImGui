@@ -68,6 +68,15 @@ int main(int argc, char* argv[])
 		// end ImGui Content
 		rlImGuiEnd();
 
+		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+			DrawText("Prssed", 0, 0, 20, RED);
+
+		if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+			DrawText("Down", 0, 20, 20, GREEN);
+
+		if (IsWindowFocused())
+			DrawText("Focused", 100, 20, 20, WHITE);
+
 		EndDrawing();
 		//----------------------------------------------------------------------------------
 	}
