@@ -4,10 +4,10 @@ A Raylib integration with DearImGui
 
 rlImgui provides a backend for [Dear ImGui](https://github.com/ocornut/imgui) using [Raylib](https://www.raylib.com/). 
 
-# Raylib and ImGui versions
+## Raylib and ImGui versions
 This main repository will always pull from the latest raylib and the latest DearImGui, each pulled from the respective Github repoitories.
 
-## Specific Versions
+### Specific Versions
 Tags and releases are made for major releases of raylib or signifigant changes to Dear ImGui.
 
   * Raylib 6.0 with ImGui 1.92.7 https://github.com/raylib-extras/rlImGui/tree/Raylib_6_0
