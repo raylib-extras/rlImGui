@@ -37,17 +37,17 @@ function download_progress(total, current)
 end
 
 function check_raylib()
-	if(os.isdir("raylib") == false and os.isdir("raylib-6.0") == false) then
-		if(not os.isfile("raylib-6.0.zip")) then
+	if(os.isdir("raylib") == false and os.isdir("raylib-5.5") == false) then
+		if(not os.isfile("raylib-5.5.zip")) then
 			print("Raylib not found, downloading from github")
-			local result_str, response_code = http.download("https://github.com/raysan5/raylib/archive/refs/tags/6.0.zip", "raylib-6.0.zip", {
+			local result_str, response_code = http.download("https://github.com/raysan5/raylib/archive/refs/tags/5.5.zip", "raylib-5.5.zip", {
 				progress = download_progress,
 				headers = { "From: Premake", "Referer: Premake" }
 			})
 		end
 		print("Unzipping to " ..  os.getcwd())
-		zip.extract("raylib-6.0.zip", os.getcwd())
-		os.remove("raylib-6.0.zip")
+		zip.extract("raylib-5.5.zip", os.getcwd())
+		os.remove("raylib-5.5.zip")
 	end
 end
 

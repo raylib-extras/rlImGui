@@ -375,3 +375,4 @@ Makefile
 *.slnx
 /imgui-1.92.7
 /raylib-6.0
+/raylib-5.5

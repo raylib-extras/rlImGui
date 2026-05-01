@@ -49,11 +49,11 @@ function platform_defines()
 end
 
 function get_raylib_dir()
-    if (os.isdir("raylib-6.0")) then
-        return "raylib-6.0"
+    if (os.isdir("raylib-5.5")) then
+        return "raylib-5.5"
     end
-    if (os.isdir("../raylib-6.0")) then
-        return "raylib-6.0"
+    if (os.isdir("../raylib-5.5")) then
+        return "raylib-5.5"
     end
     return "raylib"
 end
