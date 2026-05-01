@@ -37,32 +37,32 @@ function download_progress(total, current)
 end
 
 function check_raylib()
-	if(os.isdir("raylib") == false and os.isdir("raylib-master") == false) then
-		if(not os.isfile("raylib-master.zip")) then
+	if(os.isdir("raylib") == false and os.isdir("raylib-6.0") == false) then
+		if(not os.isfile("raylib-6.0.zip")) then
 			print("Raylib not found, downloading from github")
-			local result_str, response_code = http.download("https://github.com/raysan5/raylib/archive/refs/heads/master.zip", "raylib-master.zip", {
+			local result_str, response_code = http.download("https://github.com/raysan5/raylib/archive/refs/tags/6.0.zip", "raylib-6.0.zip", {
 				progress = download_progress,
 				headers = { "From: Premake", "Referer: Premake" }
 			})
 		end
 		print("Unzipping to " ..  os.getcwd())
-		zip.extract("raylib-master.zip", os.getcwd())
-		os.remove("raylib-master.zip")
+		zip.extract("raylib-6.0.zip", os.getcwd())
+		os.remove("raylib-6.0.zip")
 	end
 end
 
 function check_imgui()
-	if(os.isdir("imgui") == false and os.isdir("imgui-master") == false) then
-		if(not os.isfile("imgui-master.zip")) then
+	if(os.isdir("imgui") == false and os.isdir("imgui-1.92.7") == false) then
+		if(not os.isfile("imgui-1.92.7.zip")) then
 			print("imgui not found, downloading from github")
-			local result_str, response_code = http.download("https://github.com/ocornut/imgui/archive/refs/heads/master.zip", "imgui-master.zip", {
+			local result_str, response_code = http.download("https://github.com/ocornut/imgui/archive/refs/tags/v1.92.7.zip", "imgui-1.92.7.zip", {
 				progress = download_progress,
 				headers = { "From: Premake", "Referer: Premake" }
 			})
 		end
 		print("Unzipping to " ..  os.getcwd())
-		zip.extract("imgui-master.zip", os.getcwd())
-		os.remove("imgui-master.zip")
+		zip.extract("imgui-1.92.7.zip", os.getcwd())
+		os.remove("imgui-1.92.7.zip")
 	end
 end
 
@@ -104,14 +104,14 @@ project "rlImGui"
 	cdialect "C99"
 	cppdialect "C++17"
 	include_raylib()
-	includedirs { "rlImGui", "imgui", "imgui-master"}
+	includedirs { "rlImGui", "imgui-1.92.7"}
 	vpaths 
 	{
 		["Header Files"] = { "*.h"},
 		["Source Files"] = {"*.cpp"},
-		["ImGui Files"] = { "imgui/*.h","imgui/*.cpp", "imgui-master/*.h","imgui-master/*.cpp" },
+		["ImGui Files"] = { "imgui-1.92.7/*.h","imgui-1.92.7/*.cpp" },
 	}
-	files {"imgui-master/*.h", "imgui-master/*.cpp", "imgui/*.h", "imgui/*.cpp", "*.cpp", "*.h", "extras/**.h"}
+	files {"imgui-1.92.7/*.h", "imgui-1.92.7/*.cpp", "*.cpp", "*.h", "extras/**.h"}
 
 	defines {"IMGUI_DISABLE_OBSOLETE_FUNCTIONS","IMGUI_DISABLE_OBSOLETE_KEYIO"}
 
@@ -132,7 +132,7 @@ project "simple"
 	files {"examples/simple.cpp"}
 	link_raylib()
 	links {"rlImGui"}
-	includedirs {"./", "imgui", "imgui-master" }
+	includedirs {"./", "imgui-1.92.7" }
 		
     filter "action:vs*"
 		debugdir "$(SolutionDir)"	
@@ -155,7 +155,7 @@ project "editor"
 	files {"examples/editor.cpp"}
 	link_raylib()
 	links {"rlImGui"}
-	includedirs {"./", "imgui", "imgui-master" }
+	includedirs {"./", "imgui-1.92.7" }
 
     filter "action:vs*"
 		debugdir "$(SolutionDir)"	
@@ -177,7 +177,7 @@ project "imgui_style_example"
 	files {"examples/imgui_style_example.cpp"}
 	link_raylib()
 	links {"rlImGui"}
-	includedirs {"./", "imgui", "imgui-master" }
+	includedirs {"./", "imgui-1.92.7" }
 		
     filter "action:vs*"
 		debugdir "$(SolutionDir)"
@@ -198,7 +198,7 @@ project "docking_example"
 	files {"examples/docking_example.cpp"}
 	link_raylib()
 	links {"rlImGui"}
-	includedirs {"./", "imgui", "imgui-master" }
+	includedirs {"./", "imgui-1.92.7" }
 		
     filter "action:vs*"
 		debugdir "$(SolutionDir)"
@@ -219,7 +219,7 @@ project "asset_browser"
 	files {"examples/asset_browser/**.cpp", "examples/asset_browser/**.h"}
 	link_raylib()
 	links {"rlImGui"}
-	includedirs {"./", "examples/asset_browser/", "imgui", "imgui-master" }
+	includedirs {"./", "examples/asset_browser/", "imgui-1.92.7" }
 		
     filter "action:vs*"
 		debugdir "$(SolutionDir)"

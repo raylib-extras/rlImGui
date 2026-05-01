@@ -373,3 +373,5 @@ imgui-master
 build
 Makefile
 *.slnx
+/imgui-1.92.7
+/raylib-6.0
