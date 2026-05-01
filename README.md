@@ -11,6 +11,7 @@ This main repository will always pull from the latest raylib and the latest Dear
 Tags and releases are made for major releases of raylib or signifigant changes to Dear ImGui.
 
   * Raylib 6.0 with ImGui 1.92.7 https://github.com/raylib-extras/rlImGui/tree/Raylib_6_0
+  * Raylib 5.5 with ImGui 1.92.7 https://github.com/raylib-extras/rlImGui/tree/Raylib_5_5
 
 # Building
 The rlImGui repository itself is set up to use Premake to generate a static library and examples for Visual Studio 2019. Premake can also be used to generate makefiles for Linux. rlImGui can be used as a static library, or by directly including the files into your game project.
