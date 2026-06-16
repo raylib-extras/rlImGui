@@ -774,15 +774,17 @@ void ImGui_ImplRaylib_RenderDrawData(ImDrawData* draw_data)
         {
             EnableScissor(cmd.ClipRect.x - draw_data->DisplayPos.x, cmd.ClipRect.y - draw_data->DisplayPos.y, cmd.ClipRect.z - (cmd.ClipRect.x - draw_data->DisplayPos.x), cmd.ClipRect.w - (cmd.ClipRect.y - draw_data->DisplayPos.y));
             if (cmd.UserCallback != nullptr)
-            {
+			{
+				rlSetTexture(0); // force the texture state to the default since we don't know what the user callback will do with it
                 cmd.UserCallback(commandList, &cmd);
-
-                continue;
             }
-
-            ImGuiRenderTriangles(cmd.ElemCount, cmd.IdxOffset, commandList->IdxBuffer, commandList->VtxBuffer, cmd.GetTexID());
-            rlDrawRenderBatchActive();
+            else
+            {
+                ImGuiRenderTriangles(cmd.ElemCount, cmd.IdxOffset, commandList->IdxBuffer, commandList->VtxBuffer, cmd.GetTexID());
+            }
+            
         }
+        rlDrawRenderBatchActive();
     }
 
     rlSetTexture(0);
