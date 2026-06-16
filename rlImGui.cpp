@@ -223,6 +223,7 @@ static void ImGuiRenderTriangles(unsigned int count, int indexStart, const ImVec
         ImGuiTriangleVert(vertexC);
     }
     rlEnd();
+	rlSetTexture(0);
 }
 
 static void EnableScissor(float x, float y, float width, float height)
@@ -785,7 +786,6 @@ void ImGui_ImplRaylib_RenderDrawData(ImDrawData* draw_data)
         }
     }
 
-    rlSetTexture(0);
     rlDisableScissorTest();
     rlEnableBackfaceCulling();
 }
