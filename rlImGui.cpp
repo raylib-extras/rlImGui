@@ -782,9 +782,8 @@ void ImGui_ImplRaylib_RenderDrawData(ImDrawData* draw_data)
             {
                 ImGuiRenderTriangles(cmd.ElemCount, cmd.IdxOffset, commandList->IdxBuffer, commandList->VtxBuffer, cmd.GetTexID());
             }
-            
+            rlDrawRenderBatchActive();
         }
-        rlDrawRenderBatchActive();
     }
 
     rlSetTexture(0);
