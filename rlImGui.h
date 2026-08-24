@@ -188,6 +188,14 @@ bool rlImGuiImageButton(const char* name, const Texture* image);
 /// <returns>True if the button was clicked</returns>
 RLIMGUIAPI bool rlImGuiImageButtonSize(const char* name, const Texture* image, Vector2 size);
 
+/// <summary>
+/// installs a callback that will be called by rlImGuiSetup to load fonts.
+/// Use this if you want to load custom fonts or change font options.
+/// If the callback is installed, no default fonts will be loaded, you are responsible for loading all fonts
+/// </summary>
+/// <param name="callback">The callback to be called</param>
+RLIMGUIAPI void rlImGuiSetLoadFontsCallback(void(*callback)());
+
 #ifdef __cplusplus
 }
 #endif
